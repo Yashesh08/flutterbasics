@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_service.dart';
+import 'home_screen.dart';
 
 void main() => runApp(const CanteenApp());
 
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       if (!mounted) return;
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (_) => WelcomeScreen(user: result.user),
+        builder: (_) => HomeScreen(user: result.user),
       ));
     } on AuthException catch (error) {
       _showError(error.message);
@@ -139,7 +140,7 @@ class _SignupScreenState extends State<SignupScreen> {
       );
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => WelcomeScreen(user: result.user)),
+        MaterialPageRoute(builder: (_) => HomeScreen(user: result.user)),
         (_) => false,
       );
     } on AuthException catch (error) {
@@ -274,27 +275,5 @@ class SubmitButton extends StatelessWidget {
         onPressed: loading ? null : onPressed,
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
         child: loading ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2)) : Text(label),
-      );
-}
-
-class WelcomeScreen extends StatelessWidget {
-  const WelcomeScreen({super.key, required this.user});
-  final AuthUser user;
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('Campus Canteen')),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              const Icon(Icons.check_circle_outline, size: 72, color: Color(0xFF006C4F)),
-              const SizedBox(height: 16),
-              Text('Welcome, ${user.name}!', style: Theme.of(context).textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              Text('Signed in as ${user.role}. Your canteen features are ready.'),
-            ]),
-          ),
-        ),
       );
 }

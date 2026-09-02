@@ -5,6 +5,7 @@ Flutter and Node.js authentication foundations for a campus canteen application.
 ## Included in the Auth module
 
 - Flutter login and registration screens with client-side form validation, password visibility controls, loading state, and accessible error feedback.
+- A home menu screen with category filtering, item selection, cart quantities, and order-total preview.
 - Role selection for **Student** and **Canteen staff** registrations.
 - MongoDB `User` schema with name, unique email, hashed password, and role (`student`, `staff`, or `admin`).
 - `POST /api/auth/register` and `POST /api/auth/login` endpoints using bcrypt password hashing and seven-day JWTs.
@@ -14,7 +15,8 @@ Flutter and Node.js authentication foundations for a campus canteen application.
 
 ```text
 lib/
-  main.dart              Flutter login, signup, and signed-in screens
+  main.dart              Flutter login and signup screens
+  home_screen.dart       Canteen menu, item selection, and cart
   auth_service.dart      Auth API client and response models
 server/
   models/User.js         MongoDB user schema
