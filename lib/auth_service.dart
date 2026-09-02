@@ -39,15 +39,51 @@ class AuthException implements Exception {
   String toString() => message;
 }
 
+class SeedAccount {
+  const SeedAccount({
+    required this.user,
+    required this.password,
+  });
+
+  final AuthUser user;
+  final String password;
+}
+
+const seedAccounts = [
+  SeedAccount(
+    user: AuthUser(
+      id: 'seed-student-1',
+      name: 'Asha Patel',
+      email: 'student@campus.test',
+      role: 'student',
+    ),
+    password: 'student123',
+  ),
+  SeedAccount(
+    user: AuthUser(
+      id: 'seed-staff-1',
+      name: 'Ravi Kumar',
+      email: 'staff@campus.test',
+      role: 'staff',
+    ),
+    password: 'staff123',
+  ),
+];
+
 class AuthService {
-  AuthService({http.Client? client, String? baseUrl})
+  AuthService({http.Client? client, String? baseUrl, bool? useSeedData})
       : _client = client ?? http.Client(),
+        _useSeedData = useSeedData ?? const bool.fromEnvironment(
+          'USE_SEED_DATA',
+          defaultValue: true,
+        ),
         _baseUrl = baseUrl ?? const String.fromEnvironment(
           'API_BASE_URL',
           defaultValue: 'http://10.0.2.2:3000',
         );
 
   final http.Client _client;
+  final bool _useSeedData;
   final String _baseUrl;
 
   Future<AuthResult> register({
@@ -63,8 +99,27 @@ class AuthService {
         'role': role,
       });
 
-  Future<AuthResult> login({required String email, required String password}) =>
-      _send('/api/auth/login', {'email': email, 'password': password});
+  Future<AuthResult> login({required String email, required String password}) {
+    if (_useSeedData) {
+      return _loginWithSeedData(email: email, password: password);
+    }
+    return _send('/api/auth/login', {'email': email, 'password': password});
+  }
+
+  Future<AuthResult> _loginWithSeedData({
+    required String email,
+    required String password,
+  }) async {
+    final normalizedEmail = email.trim().toLowerCase();
+    for (final account in seedAccounts) {
+      if (account.user.email == normalizedEmail && account.password == password) {
+        return AuthResult(token: 'seed-session-${account.user.id}', user: account.user);
+      }
+    }
+    throw const AuthException(
+      'Use one of the seeded demo account email and password combinations shown below.',
+    );
+  }
 
   Future<AuthResult> _send(String path, Map<String, String> body) async {
     try {

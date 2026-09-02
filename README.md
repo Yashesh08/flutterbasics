@@ -9,7 +9,8 @@ Flutter and Node.js authentication foundations for a campus canteen application.
 - Role selection for **Student** and **Canteen staff** registrations.
 - MongoDB `User` schema with name, unique email, hashed password, and role (`student`, `staff`, or `admin`).
 - `POST /api/auth/register` and `POST /api/auth/login` endpoints using bcrypt password hashing and seven-day JWTs.
-- Flutter `AuthService` which calls the API. The default Android-emulator URL is `http://10.0.2.2:3000`; override it with `--dart-define=API_BASE_URL=http://your-host:3000` for another target.
+- Database-free seed login is enabled by default: `student@campus.test` / `student123` and `staff@campus.test` / `staff123`. Switch to the API after connecting MongoDB with `--dart-define=USE_SEED_DATA=false`.
+- Flutter `AuthService` which calls the API when seed mode is off. The default Android-emulator URL is `http://10.0.2.2:3000`; override it with `--dart-define=API_BASE_URL=http://your-host:3000` for another target.
 
 ## Project structure
 

@@ -88,6 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             const SizedBox(height: 24),
             SubmitButton(label: 'Log in', loading: _submitting, onPressed: _login),
+            const SizedBox(height: 16),
+            DemoAccountPanel(
+              onUseAccount: (account) {
+                setState(() {
+                  _emailController.text = account.user.email;
+                  _passwordController.text = account.password;
+                });
+              },
+            ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: _submitting
@@ -275,5 +284,35 @@ class SubmitButton extends StatelessWidget {
         onPressed: loading ? null : onPressed,
         style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
         child: loading ? const SizedBox(height: 22, width: 22, child: CircularProgressIndicator(strokeWidth: 2)) : Text(label),
+      );
+}
+
+
+class DemoAccountPanel extends StatelessWidget {
+  const DemoAccountPanel({super.key, required this.onUseAccount});
+
+  final ValueChanged<SeedAccount> onUseAccount;
+
+  @override
+  Widget build(BuildContext context) => Card(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Demo accounts', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 4),
+            const Text('Use these while the database is not connected.'),
+            const SizedBox(height: 8),
+            ...seedAccounts.map((account) => TextButton(
+                  onPressed: () => onUseAccount(account),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '${account.user.role}: ${account.user.email} / ${account.password}',
+                    ),
+                  ),
+                )),
+          ]),
+        ),
       );
 }

@@ -10,6 +10,11 @@ void main() {
 
     expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Log in'), findsOneWidget);
+    expect(find.text('Demo accounts'), findsOneWidget);
+
+    await tester.tap(find.text('student: student@campus.test / student123'));
+    await tester.pump();
+    expect(find.text('student@campus.test'), findsOneWidget);
 
     await tester.tap(find.text('New here? Create an account'));
     await tester.pumpAndSettle();
@@ -17,6 +22,17 @@ void main() {
     expect(find.text('Create your account'), findsOneWidget);
     expect(find.text('Student'), findsOneWidget);
     expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
+  });
+
+  testWidgets('seed student account logs in without a database', (tester) async {
+    await tester.pumpWidget(const CanteenApp());
+
+    await tester.tap(find.text('student: student@campus.test / student123'));
+    await tester.tap(find.text('Log in'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Hi, Asha Patel'), findsOneWidget);
+    expect(find.text('Veggie Wrap'), findsOneWidget);
   });
 
   testWidgets('signup validates required fields before calling the API', (tester) async {
