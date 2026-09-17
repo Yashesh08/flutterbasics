@@ -17,3 +17,7 @@ coverage/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Node.js auth API
+server/node_modules/
+server/.env
