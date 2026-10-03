@@ -97,6 +97,24 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
+  // ── Consolidated Dashboard Fetch ────────────────────────────────────
+  Future<void> fetchDashboardData({String? status}) async {
+    _setLoading(true);
+    try {
+      final results = await Future.wait([
+        _orderService.fetchOrders(status: status),
+        _orderService.fetchStats(),
+      ]);
+      _orders = results[0] as List<Order>;
+      _stats = results[1] as Map<String, dynamic>;
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
   void _setLoading(bool value) {
     _loading = value;
     notifyListeners();

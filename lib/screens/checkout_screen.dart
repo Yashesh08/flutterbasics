@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/order_provider.dart';
+import '../widgets/order_item_row.dart';
 import 'order_confirmation_screen.dart';
 
 /// Checkout screen where students review their cart, add special instructions,
@@ -164,34 +165,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         const SizedBox(height: 8),
                         ...cart.items.map((ci) => Card(
                               margin: const EdgeInsets.only(bottom: 8),
-                              child: ListTile(
-                                leading: Container(
-                                  width: 42,
-                                  height: 42,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.primaryContainer,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Center(
-                                    child: Icon(
-                                      ci.item.categoryIcon,
-                                      color: colorScheme.primary,
-                                      size: 20,
-                                    ),
-                                  ),
-                                ),
-                                title: Text(ci.item.name,
-                                    style: const TextStyle(fontWeight: FontWeight.w600)),
-                                subtitle: Text(
-                                  '${ci.quantity} × \$${ci.item.price.toStringAsFixed(2)}',
-                                  style: TextStyle(color: colorScheme.outline),
-                                ),
-                                trailing: Text(
-                                  '\$${ci.totalPrice.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: colorScheme.primary,
-                                  ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: OrderItemRow(
+                                  name: ci.item.name,
+                                  quantity: ci.quantity,
+                                  price: ci.item.price,
                                 ),
                               ),
                             )),
