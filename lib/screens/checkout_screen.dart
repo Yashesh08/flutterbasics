@@ -10,8 +10,8 @@ import 'order_confirmation_screen.dart';
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({
     super.key,
-    required this.studentName,
-    required this.studentEmail,
+    this.studentName = 'Student',
+    this.studentEmail = 'student@campus.edu',
   });
 
   final String studentName;
