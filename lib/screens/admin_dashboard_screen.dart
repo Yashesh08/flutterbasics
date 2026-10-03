@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../providers/order_provider.dart';
+import '../widgets/order_item_row.dart';
 
 /// Admin dashboard showing order statistics and a list of all orders
 /// with the ability to update order statuses.
@@ -19,16 +20,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final provider = context.read<OrderProvider>();
-      provider.loadOrders();
-      provider.loadStats();
+      context.read<OrderProvider>().fetchDashboardData();
     });
   }
 
   void _refreshData() {
-    final provider = context.read<OrderProvider>();
-    provider.loadOrders();
-    provider.loadStats();
+    context.read<OrderProvider>().fetchDashboardData();
   }
 
   @override
@@ -266,22 +263,7 @@ class _AdminOrderCard extends StatelessWidget {
   final Order order;
   final ValueChanged<String> onStatusUpdate;
 
-  Color _statusColor() {
-    switch (order.status) {
-      case 'pending':
-        return Colors.orange;
-      case 'preparing':
-        return Colors.blue;
-      case 'ready':
-        return Colors.green;
-      case 'collected':
-        return Colors.grey;
-      case 'cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
+  Color _statusColor() => order.statusColor;
 
   /// Returns the next logical status transition(s) for the admin.
   List<_StatusAction> _getActions() {
@@ -362,17 +344,10 @@ class _AdminOrderCard extends StatelessWidget {
             const SizedBox(height: 10),
 
             // Items
-            ...order.items.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('${item.quantity}× ${item.name}',
-                          style: const TextStyle(fontSize: 13)),
-                      Text('\$${item.subtotal.toStringAsFixed(2)}',
-                          style: TextStyle(fontSize: 13, color: colorScheme.outline)),
-                    ],
-                  ),
+            ...order.items.map((item) => OrderItemRow(
+                  name: item.name,
+                  quantity: item.quantity,
+                  price: item.price,
                 )),
 
             if (order.specialInstructions.isNotEmpty) ...[

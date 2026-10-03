@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 /// Represents a single item within a placed order.
 class OrderItem {
   const OrderItem({
@@ -105,6 +107,24 @@ class Order {
         return 'Cancelled';
       default:
         return status;
+    }
+  }
+
+  /// Color associated with order status.
+  Color get statusColor {
+    switch (status) {
+      case 'pending':
+        return Colors.orange;
+      case 'preparing':
+        return Colors.blue;
+      case 'ready':
+        return Colors.green;
+      case 'collected':
+        return Colors.grey;
+      case 'cancelled':
+        return Colors.red;
+      default:
+        return Colors.grey;
     }
   }
 

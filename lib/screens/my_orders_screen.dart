@@ -139,23 +139,6 @@ class _OrderCard extends StatelessWidget {
 
   final Order order;
 
-  Color _statusColor() {
-    switch (order.status) {
-      case 'pending':
-        return Colors.orange;
-      case 'preparing':
-        return Colors.blue;
-      case 'ready':
-        return Colors.green;
-      case 'collected':
-        return Colors.grey;
-      case 'cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
   IconData _statusIcon() {
     switch (order.status) {
       case 'pending':
@@ -176,7 +159,7 @@ class _OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final statusColor = _statusColor();
+    final statusColor = order.statusColor;
 
     return Card(
       elevation: 2,
