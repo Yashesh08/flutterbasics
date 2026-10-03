@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'auth_service.dart';
 import 'home_screen.dart';
+import 'providers/cart_provider.dart';
 
 void main() => runApp(const CanteenApp());
 
@@ -11,18 +13,21 @@ class CanteenApp extends StatelessWidget {
   final AuthService? authService;
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Campus Canteen',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF006C4F)),
-          useMaterial3: true,
-          inputDecorationTheme: const InputDecorationTheme(
-            border: OutlineInputBorder(),
-            filled: true,
+  Widget build(BuildContext context) => ChangeNotifierProvider(
+        create: (_) => CartProvider(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Campus Canteen',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF006C4F)),
+            useMaterial3: true,
+            inputDecorationTheme: const InputDecorationTheme(
+              border: OutlineInputBorder(),
+              filled: true,
+            ),
           ),
+          home: LoginScreen(authService: authService ?? AuthService()),
         ),
-        home: LoginScreen(authService: authService ?? AuthService()),
       );
 }
 

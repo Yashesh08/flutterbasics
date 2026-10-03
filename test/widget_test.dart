@@ -1,8 +1,10 @@
 import 'package:course_system_crud/auth_service.dart';
 import 'package:course_system_crud/home_screen.dart';
 import 'package:course_system_crud/main.dart';
+import 'package:course_system_crud/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   testWidgets('login screen opens the signup screen', (tester) async {
@@ -12,11 +14,15 @@ void main() {
     expect(find.text('Log in'), findsOneWidget);
     expect(find.text('Demo accounts'), findsOneWidget);
 
-    await tester.tap(find.text('student: student@campus.test / student123'));
+    final demoAccountFinder = find.text('student: student@campus.test / student123');
+    await tester.ensureVisible(demoAccountFinder);
+    await tester.tap(demoAccountFinder);
     await tester.pump();
     expect(find.text('student@campus.test'), findsOneWidget);
 
-    await tester.tap(find.text('New here? Create an account'));
+    final signupBtnFinder = find.text('New here? Create an account');
+    await tester.ensureVisible(signupBtnFinder);
+    await tester.tap(signupBtnFinder);
     await tester.pumpAndSettle();
 
     expect(find.text('Create your account'), findsOneWidget);
@@ -27,20 +33,29 @@ void main() {
   testWidgets('seed student account logs in without a database', (tester) async {
     await tester.pumpWidget(const CanteenApp());
 
-    await tester.tap(find.text('student: student@campus.test / student123'));
-    await tester.tap(find.text('Log in'));
+    final demoAccountFinder = find.text('student: student@campus.test / student123');
+    await tester.ensureVisible(demoAccountFinder);
+    await tester.tap(demoAccountFinder);
+
+    final loginBtnFinder = find.widgetWithText(SubmitButton, 'Log in');
+    await tester.ensureVisible(loginBtnFinder);
+    await tester.tap(loginBtnFinder);
     await tester.pumpAndSettle();
 
-    expect(find.text('Hi, Asha Patel'), findsOneWidget);
+    expect(find.text('Welcome, Asha Patel'), findsOneWidget);
     expect(find.text('Veggie Wrap'), findsOneWidget);
   });
 
   testWidgets('signup validates required fields before calling the API', (tester) async {
     await tester.pumpWidget(const CanteenApp());
-    await tester.tap(find.text('New here? Create an account'));
+    final signupBtnFinder = find.text('New here? Create an account');
+    await tester.ensureVisible(signupBtnFinder);
+    await tester.tap(signupBtnFinder);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Create account'));
+    final createBtnFinder = find.widgetWithText(SubmitButton, 'Create account');
+    await tester.ensureVisible(createBtnFinder);
+    await tester.tap(createBtnFinder);
     await tester.pump();
 
     expect(find.text('Enter your full name'), findsOneWidget);
@@ -55,7 +70,13 @@ void main() {
       email: 'asha@example.com',
       role: 'student',
     );
-    await tester.pumpWidget(const MaterialApp(home: HomeScreen(user: user)));
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => CartProvider(),
+        child: const MaterialApp(home: HomeScreen(user: user)),
+      ),
+    );
+    await tester.pumpAndSettle();
 
     expect(find.text('Veggie Wrap'), findsOneWidget);
     expect(find.text('Chicken Rice Bowl'), findsOneWidget);
@@ -63,10 +84,10 @@ void main() {
     await tester.tap(find.byTooltip('Add Veggie Wrap'));
     await tester.pump();
 
-    expect(find.text('View cart (1)'), findsOneWidget);
+    expect(find.text('View Cart (1) · \$4.50'), findsOneWidget);
 
-    await tester.tap(find.text('Drinks'));
-    await tester.pump();
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Drinks'));
+    await tester.pumpAndSettle();
 
     expect(find.text('Cold Coffee'), findsOneWidget);
     expect(find.text('Veggie Wrap'), findsNothing);
