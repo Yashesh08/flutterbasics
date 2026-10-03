@@ -5,12 +5,14 @@ const cors = require('cors');
 const { connectDatabase } = require('./config/database');
 const authRoutes = require('./routes/auth');
 const menuRoutes = require('./routes/menu');
+const orderRoutes = require('./routes/orders');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
+app.use('/api/orders', orderRoutes);
 app.use((error, _req, res, _next) => {
   console.error(error);
   res.status(500).json({ message: 'Something went wrong. Please try again.' });
