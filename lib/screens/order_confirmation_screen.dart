@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
+import 'my_orders_screen.dart';
 
 /// Screen shown after an order is successfully placed.
 /// Shows order ID, status, items summary, and estimated prep time.
 class OrderConfirmationScreen extends StatelessWidget {
-  const OrderConfirmationScreen({super.key, required this.order});
+  const OrderConfirmationScreen({
+    super.key,
+    required this.order,
+    this.studentEmail,
+    this.studentName,
+  });
 
   final Order order;
+  final String? studentEmail;
+  final String? studentName;
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +163,17 @@ class OrderConfirmationScreen extends StatelessWidget {
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () {
+                // Navigate directly to My Orders
                 Navigator.of(context).popUntil((route) => route.isFirst);
+                if (studentEmail != null) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => MyOrdersScreen(
+                        studentEmail: studentEmail!,
+                      ),
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.receipt_long),
               label: const Text('View My Orders'),

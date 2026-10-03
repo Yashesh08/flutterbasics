@@ -1,15 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../auth_service.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
+import '../providers/order_provider.dart';
 import '../services/menu_service.dart';
 import '../widgets/menu_item_card.dart';
+import 'admin_dashboard_screen.dart';
 import 'cart_screen.dart';
+import 'my_orders_screen.dart';
 
 class MenuScreen extends StatefulWidget {
-  const MenuScreen({super.key, this.userName, this.menuService});
+  const MenuScreen({
+    super.key,
+    this.user,
+    this.userName,
+    this.userEmail,
+    this.menuService,
+  });
 
+  final AuthUser? user;
   final String? userName;
+  final String? userEmail;
   final MenuService? menuService;
 
   @override
@@ -84,11 +96,44 @@ class _MenuScreenState extends State<MenuScreen> {
           ],
         ),
         actions: [
+          if (widget.user?.role == 'staff' || widget.user?.role == 'admin')
+            IconButton(
+              tooltip: 'Admin Dashboard',
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ChangeNotifierProvider(
+                      create: (_) => OrderProvider(),
+                      child: AdminDashboardScreen(staffUser: widget.user),
+                    ),
+                  ),
+                );
+              },
+            ),
+          IconButton(
+            tooltip: 'My Orders',
+            icon: const Icon(Icons.receipt_long_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => MyOrdersScreen(
+                    studentEmail: widget.user?.email ?? widget.userEmail ?? 'student@campus.test',
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             tooltip: 'View Cart',
             onPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CartScreen()),
+                MaterialPageRoute(
+                  builder: (_) => CartScreen(
+                    studentName: widget.user?.name ?? widget.userName ?? 'Student',
+                    studentEmail: widget.user?.email ?? widget.userEmail ?? 'student@campus.test',
+                  ),
+                ),
               );
             },
             icon: Badge(
@@ -216,7 +261,12 @@ class _MenuScreenState extends State<MenuScreen> {
           ? FloatingActionButton.extended(
               onPressed: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const CartScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => CartScreen(
+                      studentName: widget.user?.name ?? widget.userName ?? 'Student',
+                      studentEmail: widget.user?.email ?? widget.userEmail ?? 'student@campus.test',
+                    ),
+                  ),
                 );
               },
               icon: const Icon(Icons.shopping_bag),

@@ -67,7 +67,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // Navigate to confirmation screen
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (_) => OrderConfirmationScreen(order: order),
+          builder: (_) => OrderConfirmationScreen(
+            order: order,
+            studentEmail: widget.studentEmail,
+            studentName: widget.studentName,
+          ),
         ),
       );
     } catch (e) {

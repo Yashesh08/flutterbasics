@@ -4,7 +4,14 @@ import '../providers/cart_provider.dart';
 import 'checkout_screen.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({super.key});
+  const CartScreen({
+    super.key,
+    this.studentName,
+    this.studentEmail,
+  });
+
+  final String? studentName;
+  final String? studentEmail;
 
   @override
   Widget build(BuildContext context) {
@@ -216,15 +223,16 @@ class CartScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
                         FilledButton(
-                          onPressed: cart.isEmpty
-                              ? null
-                              : () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (_) => const CheckoutScreen(),
-                                    ),
-                                  );
-                                },
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => CheckoutScreen(
+                                  studentName: studentName ?? 'Student',
+                                  studentEmail: studentEmail ?? 'student@campus.test',
+                                ),
+                              ),
+                            );
+                          },
                           style: FilledButton.styleFrom(
                             minimumSize: const Size.fromHeight(52),
                             shape: RoundedRectangleBorder(

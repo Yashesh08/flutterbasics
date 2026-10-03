@@ -9,6 +9,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MenuScreen(userName: user.name);
+    return MenuScreen(
+      user: user,
+      userName: user.name,
+      userEmail: user.email,
+    );
   }
 }

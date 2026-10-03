@@ -1,17 +1,14 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/order.dart';
+import 'api_config.dart';
 
 /// Service that handles order-related API calls.
 /// Falls back to a local in-memory store when the server is unreachable.
 class OrderService {
   OrderService({http.Client? client, String? baseUrl})
       : _client = client ?? http.Client(),
-        _baseUrl = baseUrl ??
-            const String.fromEnvironment(
-              'API_BASE_URL',
-              defaultValue: 'http://10.0.2.2:3000',
-            );
+        _baseUrl = baseUrl ?? defaultApiBaseUrl;
 
   final http.Client _client;
   final String _baseUrl;

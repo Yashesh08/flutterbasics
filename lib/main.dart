@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'home_screen.dart';
 import 'providers/cart_provider.dart';
+import 'providers/order_provider.dart';
+import 'screens/admin_dashboard_screen.dart';
 
 void main() => runApp(const CanteenApp());
 
@@ -13,8 +15,11 @@ class CanteenApp extends StatelessWidget {
   final AuthService? authService;
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-        create: (_) => CartProvider(),
+  Widget build(BuildContext context) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => CartProvider()),
+          ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Campus Canteen',
@@ -63,8 +68,16 @@ class _LoginScreenState extends State<LoginScreen> {
         password: _passwordController.text,
       );
       if (!mounted) return;
+      if (!mounted) return;
+      final user = result.user;
+      final isStaff = user.role == 'staff' || user.role == 'admin';
       Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (_) => HomeScreen(user: result.user),
+        builder: (_) => isStaff
+            ? ChangeNotifierProvider(
+                create: (_) => OrderProvider(),
+                child: AdminDashboardScreen(staffUser: user),
+              )
+            : HomeScreen(user: user),
       ));
     } on AuthException catch (error) {
       _showError(error.message);
@@ -153,8 +166,18 @@ class _SignupScreenState extends State<SignupScreen> {
         role: _role,
       );
       if (!mounted) return;
+      if (!mounted) return;
+      final user = result.user;
+      final isStaff = user.role == 'staff' || user.role == 'admin';
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => HomeScreen(user: result.user)),
+        MaterialPageRoute(
+          builder: (_) => isStaff
+              ? ChangeNotifierProvider(
+                  create: (_) => OrderProvider(),
+                  child: AdminDashboardScreen(staffUser: user),
+                )
+              : HomeScreen(user: user),
+        ),
         (_) => false,
       );
     } on AuthException catch (error) {

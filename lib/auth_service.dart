@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'services/api_config.dart';
 
 class AuthUser {
   const AuthUser({
@@ -77,10 +78,7 @@ class AuthService {
           'USE_SEED_DATA',
           defaultValue: true,
         ),
-        _baseUrl = baseUrl ?? const String.fromEnvironment(
-          'API_BASE_URL',
-          defaultValue: 'http://10.0.2.2:3000',
-        );
+        _baseUrl = baseUrl ?? defaultApiBaseUrl;
 
   final http.Client _client;
   final bool _useSeedData;

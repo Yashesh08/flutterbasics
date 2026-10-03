@@ -1,15 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/menu_item.dart';
+import 'api_config.dart';
 
 class MenuService {
   MenuService({http.Client? client, String? baseUrl})
       : _client = client ?? http.Client(),
-        _baseUrl = baseUrl ??
-            const String.fromEnvironment(
-              'API_BASE_URL',
-              defaultValue: 'http://10.0.2.2:3000',
-            );
+        _baseUrl = baseUrl ?? defaultApiBaseUrl;
 
   final http.Client _client;
   final String _baseUrl;

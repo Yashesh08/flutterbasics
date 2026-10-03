@@ -21,3 +21,8 @@ Thumbs.db
 # Node.js auth API
 server/node_modules/
 server/.env
+
+# Gradle
+.gradle/
+android/.gradle/
+
