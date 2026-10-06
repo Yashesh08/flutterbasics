@@ -23,7 +23,26 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final _instructionsController = TextEditingController();
+  String _orderType = 'dine-in';
   bool _placingOrder = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadQueueStatus();
+    });
+  }
+
+  void _loadQueueStatus() {
+    final cart = context.read<CartProvider>();
+    final maxPrep = cart.items.fold<int>(8, (max, ci) {
+      final match = RegExp(r'\d+').firstMatch(ci.item.prepTime);
+      final val = match != null ? int.parse(match.group(0)!) : 8;
+      return val > max ? val : max;
+    });
+    context.read<OrderProvider>().fetchQueueEstimate(itemPrepMinutes: maxPrep);
+  }
 
   @override
   void dispose() {
@@ -56,6 +75,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         studentEmail: widget.studentEmail,
         items: items,
         totalAmount: cart.totalAmount,
+        orderType: _orderType,
         specialInstructions: _instructionsController.text.trim(),
       );
 
@@ -156,6 +176,124 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               ],
                             ),
                           ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Order Type Selection (Dine-in / Takeaway)
+                        Text(
+                          'Dining Option',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        SegmentedButton<String>(
+                          segments: const [
+                            ButtonSegment(
+                              value: 'dine-in',
+                              label: Text('Dine-In'),
+                              icon: Icon(Icons.restaurant),
+                            ),
+                            ButtonSegment(
+                              value: 'takeaway',
+                              label: Text('Takeaway'),
+                              icon: Icon(Icons.takeout_dining),
+                            ),
+                          ],
+                          selected: {_orderType},
+                          onSelectionChanged: (set) =>
+                              setState(() => _orderType = set.first),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // ETA & Kitchen Queue Prediction Card
+                        Consumer<OrderProvider>(
+                          builder: (context, orderProvider, _) {
+                            final maxPrep = cart.items.fold<int>(5, (max, ci) {
+                              final match = RegExp(r'\d+').firstMatch(ci.item.prepTime);
+                              final val = match != null ? int.parse(match.group(0)!) : 5;
+                              return val > max ? val : max;
+                            });
+
+                            final queueEstimate = orderProvider.queueEstimate;
+                            final ordersInQueue =
+                                (queueEstimate?['ordersInQueue'] as num?)?.toInt() ?? 0;
+                            final queueWaitMinutes =
+                                (queueEstimate?['queueWaitMinutes'] as num?)?.toInt() ?? 0;
+                            final queuePosition =
+                                (queueEstimate?['queuePosition'] as num?)?.toInt() ??
+                                    (ordersInQueue + 1);
+                            final previewEta = maxPrep + queueWaitMinutes + 3;
+
+                            return Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primaryContainer.withValues(alpha: 0.35),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: colorScheme.primaryContainer,
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2),
+                                    child: Icon(Icons.soup_kitchen_outlined,
+                                        color: colorScheme.primary),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Estimated Ready Time: ~$previewEta min',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: colorScheme.primary,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: colorScheme.primary
+                                                    .withValues(alpha: 0.12),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                'Queue #$queuePosition',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: colorScheme.primary,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          ordersInQueue == 0
+                                              ? 'Kitchen is free (0 in queue). Food: ~$maxPrep min + 3 min buffer.'
+                                              : 'Kitchen Queue: $ordersInQueue order${ordersInQueue > 1 ? 's' : ''} ahead (~$queueWaitMinutes min queue wait + ~$maxPrep min food prep + 3 min buffer).',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                         const SizedBox(height: 16),
 

@@ -1,0 +1,1058 @@
+{
+  "menuitems": [
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b136d"
+      },
+      "name": "Veggie Wrap",
+      "price": 4.5,
+      "category": "Meals",
+      "prepTime": "8 min",
+      "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.266Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.266Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b136e"
+      },
+      "name": "Chicken Rice Bowl",
+      "price": 6.75,
+      "category": "Meals",
+      "prepTime": "12 min",
+      "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b136f"
+      },
+      "name": "Paneer Sandwich",
+      "price": 3.8,
+      "category": "Snacks",
+      "prepTime": "6 min",
+      "imageUrl": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b1370"
+      },
+      "name": "Crispy Samosa",
+      "price": 1.25,
+      "category": "Snacks",
+      "prepTime": "4 min",
+      "imageUrl": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b1371"
+      },
+      "name": "Cold Coffee",
+      "price": 2.5,
+      "category": "Drinks",
+      "prepTime": "3 min",
+      "imageUrl": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b1372"
+      },
+      "name": "Fresh Lemonade",
+      "price": 1.8,
+      "category": "Drinks",
+      "prepTime": "2 min",
+      "imageUrl": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3b12bb30f61620c5b1373"
+      },
+      "name": "Chocolate Brownie",
+      "price": 3,
+      "category": "Desserts",
+      "prepTime": "5 min",
+      "imageUrl": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400",
+      "available": true,
+      "createdAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T14:16:11.267Z"
+      }
+    }
+  ],
+  "users": [
+    {
+      "_id": {
+        "$oid": "6ac3d13fd175fc51657889cb"
+      },
+      "name": "Ravi Kumar",
+      "email": "staff@campus.test",
+      "password": "$2a$12$MKJFD3aTftBkZ.JdTD6vEuo7Bjo1MZPsLO3kUJpHPsO9IgAyOtNkS",
+      "role": "staff",
+      "createdAt": {
+        "$date": "2026-10-05T16:33:03.826Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:33:03.826Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d140d175fc51657889ce"
+      },
+      "name": "Asha Patel",
+      "email": "student@campus.test",
+      "password": "$2a$12$U9lnHz0IrzZjdCBQZfgciei9QsUiWXpeFjIDGhrbSzVlPdWtoQR7C",
+      "role": "student",
+      "createdAt": {
+        "$date": "2026-10-05T16:33:04.095Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:33:04.095Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d140d175fc51657889d1"
+      },
+      "name": "Admin User",
+      "email": "admin@campus.test",
+      "password": "$2a$12$LT5Dj5fBXDwbbgbEi/u4u.BPcTaTR1YsRHftOHqzGwqpqAD89xvCG",
+      "role": "staff",
+      "createdAt": {
+        "$date": "2026-10-05T16:33:04.350Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:33:04.350Z"
+      }
+    }
+  ],
+  "orders": [
+    {
+      "_id": {
+        "$oid": "6ac486c25f0c7df177518b3b"
+      },
+      "studentName": "Queue Test Student",
+      "studentEmail": "queue_test_1791264450361@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486c25f0c7df177518b3a"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 3.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 15,
+      "ordersAhead": 14,
+      "queueWaitTime": "21 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:57:30.368Z"
+      },
+      "estimatedPrepTime": "30 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:27:30.369Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:27:30.380Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac486c05f0c7df177518b2f"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486c05f0c7df177518b2e"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 15,
+      "ordersAhead": 14,
+      "queueWaitTime": "21 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:55:28.910Z"
+      },
+      "estimatedPrepTime": "28 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:27:28.910Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:27:28.910Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac486c05f0c7df177518b27"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486c05f0c7df177518b25"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac486c05f0c7df177518b26"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 13,
+      "ordersAhead": 12,
+      "queueWaitTime": "18 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T06:00:28.885Z"
+      },
+      "estimatedPrepTime": "33 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-06T05:27:28.886Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:27:28.886Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac486c05f0c7df177518b23"
+      },
+      "studentName": "Test Student Day4",
+      "studentEmail": "student_1791264448857@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486c05f0c7df177518b21"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac486c05f0c7df177518b22"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 8.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 13,
+      "ordersAhead": 12,
+      "queueWaitTime": "18 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:54:28.883Z"
+      },
+      "estimatedPrepTime": "27 min",
+      "specialInstructions": "Less ice please",
+      "createdAt": {
+        "$date": "2026-10-06T05:27:28.884Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:27:28.925Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac486b65f0c7df177518b14"
+      },
+      "studentName": "Test Student Day4",
+      "studentEmail": "student_1791264438598@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486b65f0c7df177518b12"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac486b65f0c7df177518b13"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 8.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 13,
+      "ordersAhead": 12,
+      "queueWaitTime": "18 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:54:18.614Z"
+      },
+      "estimatedPrepTime": "27 min",
+      "specialInstructions": "Less ice please",
+      "createdAt": {
+        "$date": "2026-10-06T05:27:18.615Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:27:18.639Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4869c5f0c7df177518b0d"
+      },
+      "studentName": "Test Student Day4",
+      "studentEmail": "student_1791264412522@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4869c5f0c7df177518b0b"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac4869c5f0c7df177518b0c"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 8.8,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 12,
+      "ordersAhead": 11,
+      "queueWaitTime": "18 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:53:52.537Z"
+      },
+      "estimatedPrepTime": "27 min",
+      "specialInstructions": "Less ice please",
+      "createdAt": {
+        "$date": "2026-10-06T05:26:52.538Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:26:52.538Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4867d5f0c7df177518b08"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4867d5f0c7df177518b07"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 11,
+      "ordersAhead": 10,
+      "queueWaitTime": "15 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:48:21.553Z"
+      },
+      "estimatedPrepTime": "22 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:26:21.554Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:26:21.554Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4867d5f0c7df177518b03"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4867d5f0c7df177518b01"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac4867d5f0c7df177518b02"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 10,
+      "ordersAhead": 9,
+      "queueWaitTime": "15 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:56:21.533Z"
+      },
+      "estimatedPrepTime": "30 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-06T05:26:21.534Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:26:21.534Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4865e5f0c7df177518afe"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4865e5f0c7df177518afd"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 9,
+      "ordersAhead": 8,
+      "queueWaitTime": "12 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:44:50.465Z"
+      },
+      "estimatedPrepTime": "19 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:25:50.466Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:25:50.466Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4865e5f0c7df177518afa"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4865e5f0c7df177518af8"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac4865e5f0c7df177518af9"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 8,
+      "ordersAhead": 7,
+      "queueWaitTime": "12 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:52:50.427Z"
+      },
+      "estimatedPrepTime": "27 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-06T05:25:50.428Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:25:50.428Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac486555f0c7df177518af3"
+      },
+      "studentName": "Queue Test Student",
+      "studentEmail": "queue_test_1791264341951@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac486555f0c7df177518af2"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 3.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 8,
+      "ordersAhead": 7,
+      "queueWaitTime": "12 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:46:41.971Z"
+      },
+      "estimatedPrepTime": "21 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:25:41.976Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:25:42.005Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac48341041d58d1f77170e3"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac48341041d58d1f77170e2"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:19:33.888Z"
+      },
+      "estimatedPrepTime": "7 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-06T05:12:33.888Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:12:33.888Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac48341041d58d1f77170dd"
+      },
+      "studentName": "Test Student Day4",
+      "studentEmail": "student_1791263553749@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac48341041d58d1f77170db"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac48341041d58d1f77170dc"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 8.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:21:33.761Z"
+      },
+      "estimatedPrepTime": "9 min",
+      "specialInstructions": "Less ice please",
+      "createdAt": {
+        "$date": "2026-10-06T05:12:33.762Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:12:33.950Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac48341041d58d1f77170d9"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac48341041d58d1f77170d7"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac48341041d58d1f77170d8"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:27:33.727Z"
+      },
+      "estimatedPrepTime": "15 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-06T05:12:33.739Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:12:33.739Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac4829d041d58d1f77170cc"
+      },
+      "studentName": "Test Student Day4",
+      "studentEmail": "student_1791263389186@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac4829d041d58d1f77170ca"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac4829d041d58d1f77170cb"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 8.8,
+      "orderType": "takeaway",
+      "status": "collected",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T05:18:49.223Z"
+      },
+      "estimatedPrepTime": "9 min",
+      "specialInstructions": "Less ice please",
+      "createdAt": {
+        "$date": "2026-10-06T05:09:49.231Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T05:09:49.316Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac47aec816814c07cbeb4c6"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3b12bb30f61620c5b136e"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 1,
+          "subtotal": 6.75,
+          "prepTime": "12 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac3b12bb30f61620c5b136f"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        }
+      ],
+      "totalAmount": 10.55,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-06T04:52:00.653Z"
+      },
+      "estimatedPrepTime": "15 min",
+      "specialInstructions": "fd",
+      "createdAt": {
+        "$date": "2026-10-06T04:37:00.672Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T04:37:00.672Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d54c816814c07cbeb49f"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3d54c816814c07cbeb49e"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "ready",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-05T16:57:20.513Z"
+      },
+      "estimatedPrepTime": "7 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-05T16:50:20.513Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T04:32:21.110Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d54c816814c07cbeb49b"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3d54c816814c07cbeb499"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac3d54c816814c07cbeb49a"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "preparing",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-05T17:05:20.307Z"
+      },
+      "estimatedPrepTime": "15 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-05T16:50:20.318Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-06T04:32:14.910Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d478816814c07cbeb497"
+      },
+      "studentName": "Ravi Kumar",
+      "studentEmail": "staff@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3d478816814c07cbeb496"
+          },
+          "name": "Crispy Samosa",
+          "price": 1.25,
+          "quantity": 3,
+          "subtotal": 3.75,
+          "prepTime": "4 min"
+        }
+      ],
+      "totalAmount": 3.75,
+      "orderType": "dine-in",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-05T16:53:48.020Z"
+      },
+      "estimatedPrepTime": "7 min",
+      "specialInstructions": "",
+      "createdAt": {
+        "$date": "2026-10-05T16:46:48.021Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:46:48.021Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d477816814c07cbeb493"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3d477816814c07cbeb491"
+          },
+          "name": "Paneer Sandwich",
+          "price": 3.8,
+          "quantity": 1,
+          "subtotal": 3.8,
+          "prepTime": "6 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac3d477816814c07cbeb492"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 2,
+          "subtotal": 13.5,
+          "prepTime": "12 min"
+        }
+      ],
+      "totalAmount": 17.3,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-05T17:01:47.983Z"
+      },
+      "estimatedPrepTime": "15 min",
+      "specialInstructions": "Pack in paper bag please",
+      "createdAt": {
+        "$date": "2026-10-05T16:46:47.990Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:46:47.990Z"
+      }
+    },
+    {
+      "_id": {
+        "$oid": "6ac3d392816814c07cbeb48f"
+      },
+      "studentName": "Asha Patel",
+      "studentEmail": "student@campus.test",
+      "items": [
+        {
+          "menuItemId": {
+            "$oid": "6ac3b12bb30f61620c5b136e"
+          },
+          "name": "Chicken Rice Bowl",
+          "price": 6.75,
+          "quantity": 1,
+          "subtotal": 6.75,
+          "prepTime": "12 min"
+        },
+        {
+          "menuItemId": {
+            "$oid": "6ac3b12bb30f61620c5b1371"
+          },
+          "name": "Cold Coffee",
+          "price": 2.5,
+          "quantity": 2,
+          "subtotal": 5,
+          "prepTime": "3 min"
+        }
+      ],
+      "totalAmount": 11.75,
+      "orderType": "takeaway",
+      "status": "pending",
+      "queuePosition": 1,
+      "ordersAhead": 0,
+      "queueWaitTime": "0 min",
+      "expectedReadyAt": {
+        "$date": "2026-10-05T16:57:58.306Z"
+      },
+      "estimatedPrepTime": "15 min",
+      "specialInstructions": "Extra spicy sauce on the side please",
+      "createdAt": {
+        "$date": "2026-10-05T16:42:58.314Z"
+      },
+      "updatedAt": {
+        "$date": "2026-10-05T16:42:58.314Z"
+      }
+    }
+  ]
+}

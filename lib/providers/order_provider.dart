@@ -11,11 +11,13 @@ class OrderProvider extends ChangeNotifier {
 
   List<Order> _orders = [];
   Map<String, dynamic> _stats = {};
+  Map<String, dynamic>? _queueEstimate;
   bool _loading = false;
   String? _error;
 
   List<Order> get orders => List.unmodifiable(_orders);
   Map<String, dynamic> get stats => Map.unmodifiable(_stats);
+  Map<String, dynamic>? get queueEstimate => _queueEstimate;
   bool get loading => _loading;
   String? get error => _error;
 
@@ -25,21 +27,39 @@ class OrderProvider extends ChangeNotifier {
   List<Order> get completedOrders =>
       _orders.where((o) => !o.isActive).toList();
 
+  // ── Kitchen Queue & ETA Estimation ───────────────────────────────────
+  Future<Map<String, dynamic>> fetchQueueEstimate({int? itemPrepMinutes}) async {
+    try {
+      final estimate = await _orderService.fetchQueueEstimate(
+        itemPrepMinutes: itemPrepMinutes,
+      );
+      _queueEstimate = estimate;
+      notifyListeners();
+      return estimate;
+    } catch (_) {
+      return _queueEstimate ?? {};
+    }
+  }
+
   // ── Place Order ───────────────────────────────────────────────────────
   Future<Order> placeOrder({
     required String studentName,
     required String studentEmail,
     required List<Map<String, dynamic>> items,
     required double totalAmount,
+    String? userId,
+    String orderType = 'dine-in',
     String specialInstructions = '',
   }) async {
     _setLoading(true);
     try {
       final order = await _orderService.placeOrder(
+        userId: userId,
         studentName: studentName,
         studentEmail: studentEmail,
         items: items,
         totalAmount: totalAmount,
+        orderType: orderType,
         specialInstructions: specialInstructions,
       );
       _orders.insert(0, order);
@@ -60,6 +80,19 @@ class OrderProvider extends ChangeNotifier {
     _setLoading(true);
     try {
       _orders = await _orderService.fetchOrders(email: email, status: status);
+      _error = null;
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // ── Load Student's Own Orders (Day 4) ─────────────────────────────────
+  Future<void> loadMyOrders({required String email, String? token, String? status}) async {
+    _setLoading(true);
+    try {
+      _orders = await _orderService.fetchMyOrders(email: email, token: token, status: status);
       _error = null;
     } catch (e) {
       _error = e.toString();

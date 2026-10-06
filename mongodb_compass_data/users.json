@@ -1,0 +1,47 @@
+[
+  {
+    "_id": {
+      "$oid": "6ac3d13fd175fc51657889cb"
+    },
+    "name": "Ravi Kumar",
+    "email": "staff@campus.test",
+    "password": "$2a$12$MKJFD3aTftBkZ.JdTD6vEuo7Bjo1MZPsLO3kUJpHPsO9IgAyOtNkS",
+    "role": "staff",
+    "createdAt": {
+      "$date": "2026-10-05T16:33:03.826Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T16:33:03.826Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3d140d175fc51657889ce"
+    },
+    "name": "Asha Patel",
+    "email": "student@campus.test",
+    "password": "$2a$12$U9lnHz0IrzZjdCBQZfgciei9QsUiWXpeFjIDGhrbSzVlPdWtoQR7C",
+    "role": "student",
+    "createdAt": {
+      "$date": "2026-10-05T16:33:04.095Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T16:33:04.095Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3d140d175fc51657889d1"
+    },
+    "name": "Admin User",
+    "email": "admin@campus.test",
+    "password": "$2a$12$LT5Dj5fBXDwbbgbEi/u4u.BPcTaTR1YsRHftOHqzGwqpqAD89xvCG",
+    "role": "staff",
+    "createdAt": {
+      "$date": "2026-10-05T16:33:04.350Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T16:33:04.350Z"
+    }
+  }
+]

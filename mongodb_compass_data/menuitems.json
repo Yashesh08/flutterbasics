@@ -1,0 +1,121 @@
+[
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b136d"
+    },
+    "name": "Veggie Wrap",
+    "price": 4.5,
+    "category": "Meals",
+    "prepTime": "8 min",
+    "imageUrl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.266Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.266Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b136e"
+    },
+    "name": "Chicken Rice Bowl",
+    "price": 6.75,
+    "category": "Meals",
+    "prepTime": "12 min",
+    "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b136f"
+    },
+    "name": "Paneer Sandwich",
+    "price": 3.8,
+    "category": "Snacks",
+    "prepTime": "6 min",
+    "imageUrl": "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b1370"
+    },
+    "name": "Crispy Samosa",
+    "price": 1.25,
+    "category": "Snacks",
+    "prepTime": "4 min",
+    "imageUrl": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b1371"
+    },
+    "name": "Cold Coffee",
+    "price": 2.5,
+    "category": "Drinks",
+    "prepTime": "3 min",
+    "imageUrl": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b1372"
+    },
+    "name": "Fresh Lemonade",
+    "price": 1.8,
+    "category": "Drinks",
+    "prepTime": "2 min",
+    "imageUrl": "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  },
+  {
+    "_id": {
+      "$oid": "6ac3b12bb30f61620c5b1373"
+    },
+    "name": "Chocolate Brownie",
+    "price": 3,
+    "category": "Desserts",
+    "prepTime": "5 min",
+    "imageUrl": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400",
+    "available": true,
+    "createdAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    },
+    "updatedAt": {
+      "$date": "2026-10-05T14:16:11.267Z"
+    }
+  }
+]

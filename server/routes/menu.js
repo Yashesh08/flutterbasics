@@ -1,5 +1,7 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const MenuItem = require('../models/MenuItem');
+const { authenticateToken, requireAdminOrStaff } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -62,6 +64,20 @@ const initialMenuItems = [
   },
 ];
 
+function formatItem(item) {
+  return {
+    id: item._id.toString(),
+    name: item.name,
+    category: item.category,
+    price: item.price,
+    prepTime: item.prepTime,
+    imageUrl: item.imageUrl || '',
+    available: item.available ?? true,
+    createdAt: item.createdAt?.toISOString(),
+    updatedAt: item.updatedAt?.toISOString(),
+  };
+}
+
 // GET /api/menu - fetch all menu items (auto-seeds if empty)
 router.get('/', async (req, res, next) => {
   try {
@@ -71,17 +87,142 @@ router.get('/', async (req, res, next) => {
       items = await MenuItem.insertMany(initialMenuItems);
     }
 
-    const formattedItems = items.map((item) => ({
-      id: item._id.toString(),
-      name: item.name,
-      category: item.category,
-      price: item.price,
-      prepTime: item.prepTime,
-      imageUrl: item.imageUrl,
-      available: item.available,
-    }));
+    return res.json(items.map(formatItem));
+  } catch (error) {
+    return next(error);
+  }
+});
 
-    return res.json(formattedItems);
+// GET /api/menu/:id - fetch single menu item
+router.get('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid menu item ID format.' });
+    }
+
+    const item = await MenuItem.findById(id);
+    if (!item) {
+      return res.status(404).json({ message: 'Menu item not found.' });
+    }
+
+    return res.json(formatItem(item));
+  } catch (error) {
+    return next(error);
+  }
+});
+
+// POST /api/menu - create new menu item (admin/staff only)
+router.post('/', authenticateToken, requireAdminOrStaff, async (req, res, next) => {
+  try {
+    const { name, price, category, prepTime, imageUrl, available } = req.body;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return res.status(400).json({ message: 'Item name is required.' });
+    }
+
+    const parsedPrice = parseFloat(price);
+    if (isNaN(parsedPrice) || parsedPrice < 0) {
+      return res.status(400).json({ message: 'Price must be a non-negative number.' });
+    }
+
+    const newItem = await MenuItem.create({
+      name: name.trim(),
+      price: parsedPrice,
+      category: category && typeof category === 'string' ? category.trim() : 'Meals',
+      prepTime: prepTime && typeof prepTime === 'string' && prepTime.trim() ? prepTime.trim() : '10 min',
+      imageUrl: imageUrl && typeof imageUrl === 'string' ? imageUrl.trim() : '',
+      available: available !== undefined ? Boolean(available) : true,
+    });
+
+    return res.status(201).json(formatItem(newItem));
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    return next(error);
+  }
+});
+
+// PUT /api/menu/:id - update existing menu item (admin/staff only)
+router.put('/:id', authenticateToken, requireAdminOrStaff, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid menu item ID format.' });
+    }
+
+    const { name, price, category, prepTime, imageUrl, available } = req.body;
+    const updateData = {};
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || !name.trim()) {
+        return res.status(400).json({ message: 'Item name cannot be empty.' });
+      }
+      updateData.name = name.trim();
+    }
+
+    if (price !== undefined) {
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice) || parsedPrice < 0) {
+        return res.status(400).json({ message: 'Price must be a non-negative number.' });
+      }
+      updateData.price = parsedPrice;
+    }
+
+    if (category !== undefined) {
+      updateData.category = category.trim();
+    }
+
+    if (prepTime !== undefined) {
+      updateData.prepTime = prepTime.trim();
+    }
+
+    if (imageUrl !== undefined) {
+      updateData.imageUrl = imageUrl.trim();
+    }
+
+    if (available !== undefined) {
+      updateData.available = Boolean(available);
+    }
+
+    const updatedItem = await MenuItem.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: 'Menu item not found.' });
+    }
+
+    return res.json(formatItem(updatedItem));
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ message: error.message });
+    }
+    return next(error);
+  }
+});
+
+// DELETE /api/menu/:id - delete existing menu item (admin/staff only)
+router.delete('/:id', authenticateToken, requireAdminOrStaff, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: 'Invalid menu item ID format.' });
+    }
+
+    const deletedItem = await MenuItem.findByIdAndDelete(id);
+    if (!deletedItem) {
+      return res.status(404).json({ message: 'Menu item not found.' });
+    }
+
+    return res.json({
+      message: 'Menu item deleted successfully.',
+      id: deletedItem._id.toString(),
+      item: formatItem(deletedItem),
+    });
   } catch (error) {
     return next(error);
   }
@@ -95,6 +236,7 @@ router.post('/seed', async (req, res, next) => {
     return res.status(201).json({
       message: 'Database seeded successfully with menu items.',
       count: items.length,
+      items: items.map(formatItem),
     });
   } catch (error) {
     return next(error);

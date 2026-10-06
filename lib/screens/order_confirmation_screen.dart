@@ -69,13 +69,37 @@ class OrderConfirmationScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _detailRow(context, 'Order ID', '#${order.id.substring(order.id.length > 6 ? order.id.length - 6 : 0)}'),
+                    _detailRow(
+                      context,
+                      'Order ID',
+                      '#${order.id.length > 8 ? order.id.substring(order.id.length - 8) : order.id}',
+                    ),
+                    const Divider(height: 20),
+                    _detailRow(
+                      context,
+                      'Dining Option',
+                      order.formattedOrderType,
+                    ),
+                    const Divider(height: 20),
+                    _detailRow(
+                      context,
+                      'Kitchen Queue',
+                      'Queue #${order.queuePosition} (${order.ordersAhead} ahead)',
+                      valueColor: colorScheme.primary,
+                    ),
                     const Divider(height: 20),
                     _detailRow(context, 'Status', order.statusLabel,
                         valueColor: Colors.orange),
                     const Divider(height: 20),
                     _detailRow(context, 'Estimated Prep',
                         order.estimatedPrepTime.isNotEmpty ? order.estimatedPrepTime : '~15 min'),
+                    const Divider(height: 20),
+                    _detailRow(
+                      context,
+                      'Ready By',
+                      order.formattedReadyTime,
+                      valueColor: Colors.green.shade700,
+                    ),
                     const Divider(height: 20),
                     _detailRow(context, 'Items', '${order.items.length} item(s)'),
                     const Divider(height: 20),

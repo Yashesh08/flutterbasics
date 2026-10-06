@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../auth_service.dart';
 import '../models/order.dart';
 import '../providers/order_provider.dart';
+import 'admin_menu_management_screen.dart';
 
 /// Staff/Admin Dashboard (Day 5-7 – Person B).
 ///
@@ -27,6 +28,7 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
+  int _currentTab = 0;
   String _statusFilter = 'all';
   Timer? _autoRefreshTimer;
 
@@ -71,8 +73,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Staff Dashboard',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+            Text(
+              _currentTab == 0 ? 'Staff Orders' : 'Menu Management',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
             if (widget.staffUser != null)
               Text(
                 'Welcome, ${widget.staffUser!.name}',
@@ -82,21 +86,21 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ],
         ),
         actions: [
-          // Manual refresh button
-          IconButton(
-            icon: orderProvider.loading
-                ? SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: colorScheme.onSurface,
-                    ),
-                  )
-                : const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: _fetchAll,
-          ),
+          if (_currentTab == 0)
+            IconButton(
+              icon: orderProvider.loading
+                  ? SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: colorScheme.onSurface,
+                      ),
+                    )
+                  : const Icon(Icons.refresh),
+              tooltip: 'Refresh Orders',
+              onPressed: _fetchAll,
+            ),
           // Logout → back to Login screen
           IconButton(
             icon: const Icon(Icons.logout),
@@ -108,7 +112,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         ],
       ),
 
-      body: RefreshIndicator(
+      body: _currentTab == 1
+          ? const AdminMenuManagementScreen(embedded: true)
+          : RefreshIndicator(
         onRefresh: () async => _fetchAll(),
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -236,6 +242,22 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentTab,
+        onDestinationSelected: (idx) => setState(() => _currentTab = idx),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long),
+            label: 'Orders',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.restaurant_menu_outlined),
+            selectedIcon: Icon(Icons.restaurant_menu),
+            label: 'Menu CRUD',
+          ),
+        ],
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'auth_service.dart';
 import 'home_screen.dart';
 import 'providers/cart_provider.dart';
+import 'providers/menu_provider.dart';
 import 'providers/order_provider.dart';
 import 'screens/admin_dashboard_screen.dart';
 
@@ -19,6 +20,7 @@ class CanteenApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (_) => CartProvider()),
           ChangeNotifierProvider(create: (_) => OrderProvider()),
+          ChangeNotifierProvider(create: (_) => MenuProvider()),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

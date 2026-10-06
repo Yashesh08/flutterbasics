@@ -97,11 +97,20 @@ class AuthService {
         'role': role,
       });
 
-  Future<AuthResult> login({required String email, required String password}) {
-    if (_useSeedData) {
-      return _loginWithSeedData(email: email, password: password);
+  Future<AuthResult> login({required String email, required String password}) async {
+    try {
+      return await _send('/api/auth/login', {'email': email, 'password': password});
+    } on AuthException catch (e) {
+      if (_useSeedData && e.message.contains('Could not reach')) {
+        return _loginWithSeedData(email: email, password: password);
+      }
+      rethrow;
+    } catch (_) {
+      if (_useSeedData) {
+        return _loginWithSeedData(email: email, password: password);
+      }
+      rethrow;
     }
-    return _send('/api/auth/login', {'email': email, 'password': password});
   }
 
   Future<AuthResult> _loginWithSeedData({

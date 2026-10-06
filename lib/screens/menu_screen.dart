@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import '../auth_service.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
+import '../providers/menu_provider.dart';
 import '../providers/order_provider.dart';
 import '../services/menu_service.dart';
 import '../widgets/menu_item_card.dart';
 import 'admin_dashboard_screen.dart';
+import 'admin_menu_management_screen.dart';
 import 'cart_screen.dart';
 import 'my_orders_screen.dart';
 
@@ -68,8 +70,8 @@ class _MenuScreenState extends State<MenuScreen> {
     }
   }
 
-  List<MenuItem> get _filteredItems {
-    return _allMenuItems.where((item) {
+  List<MenuItem> _getFilteredItems(List<MenuItem> items) {
+    return items.where((item) {
       final matchesCategory =
           _selectedCategory == 'All' || item.category.toLowerCase() == _selectedCategory.toLowerCase();
       final matchesSearch =
@@ -81,6 +83,11 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
+    final menuProvider = context.watch<MenuProvider?>();
+    final sourceList = (menuProvider != null && menuProvider.items.isNotEmpty)
+        ? menuProvider.items
+        : _allMenuItems;
+    final filteredItems = _getFilteredItems(sourceList);
 
     return Scaffold(
       appBar: AppBar(
@@ -96,12 +103,24 @@ class _MenuScreenState extends State<MenuScreen> {
           ],
         ),
         actions: [
-          if (widget.user?.role == 'staff' || widget.user?.role == 'admin')
+          if (widget.user?.role == 'staff' || widget.user?.role == 'admin') ...[
+            IconButton(
+              tooltip: 'Manage Menu (Admin CRUD)',
+              icon: const Icon(Icons.restaurant_menu),
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const AdminMenuManagementScreen(),
+                  ),
+                );
+                _loadMenuData();
+              },
+            ),
             IconButton(
               tooltip: 'Admin Dashboard',
               icon: const Icon(Icons.admin_panel_settings_outlined),
-              onPressed: () {
-                Navigator.of(context).push(
+              onPressed: () async {
+                await Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => ChangeNotifierProvider(
                       create: (_) => OrderProvider(),
@@ -109,8 +128,10 @@ class _MenuScreenState extends State<MenuScreen> {
                     ),
                   ),
                 );
+                _loadMenuData();
               },
             ),
+          ],
           IconButton(
             tooltip: 'My Orders',
             icon: const Icon(Icons.receipt_long_outlined),
@@ -223,7 +244,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           ],
                         ),
                       )
-                    : _filteredItems.isEmpty
+                    : filteredItems.isEmpty
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -248,9 +269,9 @@ class _MenuScreenState extends State<MenuScreen> {
                                 crossAxisSpacing: 12,
                                 mainAxisSpacing: 12,
                               ),
-                              itemCount: _filteredItems.length,
+                              itemCount: filteredItems.length,
                               itemBuilder: (context, index) {
-                                return MenuItemCard(item: _filteredItems[index]);
+                                return MenuItemCard(item: filteredItems[index]);
                               },
                             ),
                           ),
