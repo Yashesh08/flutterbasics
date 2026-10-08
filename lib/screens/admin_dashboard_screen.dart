@@ -355,8 +355,8 @@ class _StatsGrid extends StatelessWidget {
         _StatCard(
           title: 'Revenue',
           value:
-              '\$${(stats['totalRevenue'] as num?)?.toStringAsFixed(2) ?? '0.00'}',
-          icon: Icons.attach_money,
+              '₹${(stats['totalRevenue'] as num?)?.toStringAsFixed(2) ?? '0.00'}',
+          icon: Icons.currency_rupee,
           color: Colors.green,
         ),
         _StatCard(
@@ -688,7 +688,7 @@ class _AdminOrderCard extends StatelessWidget {
                       children: [
                         Text('${item.quantity}× ${item.name}',
                             style: const TextStyle(fontSize: 13)),
-                        Text('\$${item.subtotal.toStringAsFixed(2)}',
+                        Text('₹${item.subtotal.toStringAsFixed(2)}',
                             style: TextStyle(
                                 fontSize: 13, color: colorScheme.outline)),
                       ],
@@ -734,7 +734,7 @@ class _AdminOrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$${order.totalAmount.toStringAsFixed(2)}',
+                    '₹${order.totalAmount.toStringAsFixed(2)}',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
@@ -999,7 +999,7 @@ class _OrderDetailSheet extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '\$${item.subtotal.toStringAsFixed(2)}',
+                                '₹${item.subtotal.toStringAsFixed(2)}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: colorScheme.primary),
@@ -1048,7 +1048,7 @@ class _OrderDetailSheet extends StatelessWidget {
                           .titleMedium
                           ?.copyWith(fontWeight: FontWeight.bold)),
                   Text(
-                    '\$${order.totalAmount.toStringAsFixed(2)}',
+                    '₹${order.totalAmount.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           color: colorScheme.primary,

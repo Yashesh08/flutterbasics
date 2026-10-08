@@ -100,7 +100,7 @@ void main() {
     expect(find.text('Takeaway'), findsOneWidget);
     expect(find.text('1× Paneer Sandwich'), findsOneWidget);
     expect(find.text('2× Chicken Rice Bowl'), findsOneWidget);
-    expect(find.text('\$17.30'), findsOneWidget);
+    expect(find.text('₹17.30'), findsOneWidget);
     expect(find.textContaining('Estimated Ready: 15 min'), findsOneWidget);
 
     // 3. Tap active order card to open order detail bottom sheet
@@ -126,7 +126,7 @@ void main() {
     expect(find.text('Collected'), findsOneWidget);
     expect(find.text('Dine-In'), findsOneWidget);
     expect(find.text('2× Cold Coffee'), findsOneWidget);
-    expect(find.text('\$5.00'), findsNWidgets(2));
+    expect(find.text('₹5.00'), findsNWidgets(2));
   });
 
   testWidgets('MyOrdersScreen displays empty state when student has no orders', (tester) async {

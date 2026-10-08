@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/order.dart';
 import '../providers/order_provider.dart';
+import '../widgets/order_status_tracker.dart';
 
 /// Screen for students to view their past and active orders from MongoDB (Day 4 - Person A).
 class MyOrdersScreen extends StatefulWidget {
@@ -301,7 +302,7 @@ class _OrderCard extends StatelessWidget {
                           Text(
                             order.hasToken
                                 ? 'Payment: ${order.isOnlinePayment ? 'Online (Paid)' : 'Cash at Counter (Paid)'}'
-                                : 'Pay \$${order.totalAmount.toStringAsFixed(2)} cash at counter to collect token.',
+                                : 'Pay ₹${order.totalAmount.toStringAsFixed(2)} cash at counter to collect token.',
                             style: TextStyle(
                               fontSize: 11,
                               color: order.hasToken
@@ -315,6 +316,10 @@ class _OrderCard extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 12),
+
+              // Visual Status Tracker
+              OrderStatusTracker(status: order.status, compact: false),
               const SizedBox(height: 12),
 
               // Dining & ETA Section
@@ -427,7 +432,7 @@ class _OrderCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '\$${item.subtotal.toStringAsFixed(2)}',
+                          '₹${item.subtotal.toStringAsFixed(2)}',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -447,7 +452,7 @@ class _OrderCard extends StatelessWidget {
                 children: [
                   const Text('Total Amount', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   Text(
-                    '\$${order.totalAmount.toStringAsFixed(2)}',
+                    '₹${order.totalAmount.toStringAsFixed(2)}',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: colorScheme.primary),
                   ),
                 ],
@@ -580,7 +585,11 @@ class _OrderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
+
+              // Visual Tracker in Order Card
+              OrderStatusTracker(status: order.status, compact: true),
+              const SizedBox(height: 12),
 
               // Banner for active orders: Awaiting payment vs In Kitchen Prep
               if (order.isAwaitingPayment) ...[
@@ -598,7 +607,7 @@ class _OrderCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
-                          'Pay \$${order.totalAmount.toStringAsFixed(2)} at counter to receive token & send to kitchen.',
+                          'Pay ₹${order.totalAmount.toStringAsFixed(2)} at counter to receive token & send to kitchen.',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -648,7 +657,7 @@ class _OrderCard extends StatelessWidget {
                           style: const TextStyle(fontSize: 13),
                         ),
                         Text(
-                          '\$${item.subtotal.toStringAsFixed(2)}',
+                          '₹${item.subtotal.toStringAsFixed(2)}',
                           style: TextStyle(fontSize: 13, color: colorScheme.outline),
                         ),
                       ],
@@ -679,7 +688,7 @@ class _OrderCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '\$${order.totalAmount.toStringAsFixed(2)}',
+                        '₹${order.totalAmount.toStringAsFixed(2)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,

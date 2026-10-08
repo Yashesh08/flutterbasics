@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/order.dart';
+import '../widgets/order_status_tracker.dart';
 import 'my_orders_screen.dart';
 
 /// Screen shown after an order is successfully placed.
-/// Shows order ID, status, items summary, and estimated prep time.
+/// Shows order token, visual status tracker, items summary, ETA, and quick actions.
 class OrderConfirmationScreen extends StatelessWidget {
   const OrderConfirmationScreen({
     super.key,
@@ -22,41 +23,41 @@ class OrderConfirmationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Confirmed'),
+        title: const Text('Order Confirmed', style: TextStyle(fontWeight: FontWeight.bold)),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             // Success Icon
             Container(
-              width: 96,
-              height: 96,
+              width: 88,
+              height: 88,
               decoration: BoxDecoration(
                 color: Colors.green.shade50,
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.check_circle_rounded,
-                size: 64,
+                size: 60,
                 color: Colors.green.shade600,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             Text(
-              'Order Placed!',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+              'Order Placed Successfully!',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               order.isOnlinePayment
-                  ? 'Your payment was successful and token is generated.'
+                  ? 'Your payment was confirmed and your token is generated.'
                   : 'Order submitted! Please collect your token at the counter.',
-              style: TextStyle(color: colorScheme.outline, fontSize: 15),
+              style: TextStyle(color: colorScheme.outline, fontSize: 14),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -124,15 +125,23 @@ class OrderConfirmationScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+
+            // Order Status Lifecycle Tracker
+            OrderStatusTracker(status: order.status, compact: false),
+            const SizedBox(height: 16),
 
             // Order details card
             Card(
+              elevation: 1,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: colorScheme.outlineVariant.withAlpha(70),
+                ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -140,14 +149,20 @@ class OrderConfirmationScreen extends StatelessWidget {
                       context,
                       'Order Token',
                       order.tokenDisplay,
-                      valueColor: order.hasToken ? Colors.green.shade800 : Colors.amber.shade900,
+                      valueColor: order.hasToken
+                          ? Colors.green.shade800
+                          : Colors.amber.shade900,
                     ),
                     const Divider(height: 20),
                     _detailRow(
                       context,
                       'Payment Method',
-                      order.isOnlinePayment ? 'Online (Paid)' : 'Cash at Counter (Unpaid)',
-                      valueColor: order.isOnlinePayment ? Colors.green.shade700 : Colors.orange.shade800,
+                      order.isOnlinePayment
+                          ? 'Online (Paid)'
+                          : 'Cash at Counter (Unpaid)',
+                      valueColor: order.isOnlinePayment
+                          ? Colors.green.shade700
+                          : Colors.orange.shade800,
                     ),
                     const Divider(height: 20),
                     _detailRow(
@@ -174,8 +189,13 @@ class OrderConfirmationScreen extends StatelessWidget {
                     _detailRow(context, 'Status', order.statusLabel,
                         valueColor: order.statusColor),
                     const Divider(height: 20),
-                    _detailRow(context, 'Estimated Prep',
-                        order.estimatedPrepTime.isNotEmpty ? order.estimatedPrepTime : '~15 min'),
+                    _detailRow(
+                      context,
+                      'Estimated Prep',
+                      order.estimatedPrepTime.isNotEmpty
+                          ? order.estimatedPrepTime
+                          : '~15 min',
+                    ),
                     const Divider(height: 20),
                     _detailRow(
                       context,
@@ -200,7 +220,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                '\$${item.subtotal.toStringAsFixed(2)}',
+                                '₹${item.subtotal.toStringAsFixed(2)}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: colorScheme.primary,
@@ -232,15 +252,15 @@ class OrderConfirmationScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Total',
+                          'Total Paid',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
                         ),
                         Text(
-                          '\$${order.totalAmount.toStringAsFixed(2)}',
+                          '₹${order.totalAmount.toStringAsFixed(2)}',
                           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w900,
                                 color: colorScheme.primary,
                               ),
                         ),
@@ -250,12 +270,11 @@ class OrderConfirmationScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
             // Back to menu button
             FilledButton.icon(
               onPressed: () {
-                // Pop back to menu screen
                 Navigator.of(context).popUntil((route) => route.isFirst);
               },
               icon: const Icon(Icons.restaurant_menu),
@@ -270,7 +289,6 @@ class OrderConfirmationScreen extends StatelessWidget {
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: () {
-                // Navigate directly to My Orders
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 if (studentEmail != null) {
                   Navigator.of(context).push(

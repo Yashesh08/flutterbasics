@@ -61,7 +61,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Verify total amount is shown and Place Order button exists
-    expect(find.text('\$11.25'), findsNWidgets(2));
+    expect(find.text('₹11.25'), findsNWidgets(2));
     expect(find.widgetWithText(FilledButton, 'Place Order'), findsOneWidget);
   });
 

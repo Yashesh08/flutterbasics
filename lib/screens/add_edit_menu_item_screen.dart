@@ -335,9 +335,9 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         controller: _priceController,
                         keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: const InputDecoration(
-                          labelText: 'Price (\$) *',
-                          hintText: '3.50',
-                          prefixIcon: Icon(Icons.attach_money),
+                          labelText: 'Price (₹) *',
+                          hintText: '80.00',
+                          prefixIcon: Icon(Icons.currency_rupee),
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {

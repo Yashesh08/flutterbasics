@@ -84,7 +84,7 @@ void main() {
     await tester.tap(find.byTooltip('Add Veggie Wrap'));
     await tester.pump();
 
-    expect(find.text('View Cart (1) · \$4.50'), findsOneWidget);
+    expect(find.text('View Cart (1) · ₹4.50'), findsOneWidget);
 
     await tester.tap(find.widgetWithText(ChoiceChip, 'Drinks'));
     await tester.pumpAndSettle();

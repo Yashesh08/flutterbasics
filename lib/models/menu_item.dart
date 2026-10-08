@@ -76,4 +76,68 @@ class MenuItem {
         return Icons.fastfood;
     }
   }
+
+  /// Formatted price with Indian Rupee symbol
+  String get formattedPrice {
+    final isInt = price.truncateToDouble() == price;
+    return '₹${price.toStringAsFixed(isInt ? 0 : 2)}';
+  }
+
+  /// Rating derived deterministically from the item
+  double get rating {
+    final offset = (name.hashCode.abs() % 8) / 10.0;
+    return (4.2 + offset).clamp(4.0, 5.0);
+  }
+
+  /// Estimated review count
+  int get reviewCount => 30 + (name.hashCode.abs() % 180);
+
+  /// Whether this item is featured / popular
+  bool get isPopular => (name.hashCode.abs() % 3 == 0) || category.toLowerCase() == 'meals';
+
+  /// Preparation minutes parsed from prepTime string
+  int get prepMinutes {
+    final match = RegExp(r'\d+').firstMatch(prepTime);
+    return match != null ? int.parse(match.group(0)!) : 10;
+  }
+
+  /// Natural description for food details bottom sheet
+  String get description {
+    switch (category.toLowerCase()) {
+      case 'drinks':
+      case 'beverages':
+        return 'Refreshing and freshly chilled beverage prepared on demand. The perfect companion for your campus study breaks.';
+      case 'snacks':
+        return 'Crispy, savory snack prepared fresh with authentic canteen spices. Perfect for a quick bite between lectures.';
+      case 'desserts':
+        return 'Indulgent, freshly prepared sweet treat to brighten your day and finish your meal on a delightful note.';
+      case 'meals':
+      case 'combos':
+        return 'Wholesome, filling meal crafted with quality ingredients to keep you powered throughout your busy campus routine.';
+      default:
+        return 'Delicious canteen specialty prepared fresh upon order by our kitchen staff.';
+    }
+  }
+
+  /// Mood filter helpers
+  bool get isQuickBite => prepMinutes <= 8 || category.toLowerCase() == 'snacks';
+  bool get isSweet =>
+      category.toLowerCase() == 'desserts' ||
+      name.toLowerCase().contains('sweet') ||
+      name.toLowerCase().contains('brownie') ||
+      name.toLowerCase().contains('chocolate');
+  bool get isDrink =>
+      category.toLowerCase() == 'drinks' ||
+      category.toLowerCase() == 'beverages' ||
+      name.toLowerCase().contains('coffee') ||
+      name.toLowerCase().contains('tea') ||
+      name.toLowerCase().contains('lemonade') ||
+      name.toLowerCase().contains('shake');
+  bool get isProperMeal =>
+      category.toLowerCase() == 'meals' ||
+      category.toLowerCase() == 'combos' ||
+      name.toLowerCase().contains('bowl') ||
+      name.toLowerCase().contains('rice') ||
+      name.toLowerCase().contains('thali');
+  bool get isUnder100 => price < 100;
 }
