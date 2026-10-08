@@ -53,11 +53,78 @@ class OrderConfirmationScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Your order has been placed successfully.',
+              order.isOnlinePayment
+                  ? 'Your payment was successful and token is generated.'
+                  : 'Order submitted! Please collect your token at the counter.',
               style: TextStyle(color: colorScheme.outline, fontSize: 15),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+
+            // Token & Payment Status Banner
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              decoration: BoxDecoration(
+                color: order.hasToken
+                    ? Colors.green.shade50
+                    : Colors.amber.shade50,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: order.hasToken
+                      ? Colors.green.shade300
+                      : Colors.amber.shade400,
+                  width: 1.5,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        order.hasToken
+                            ? Icons.confirmation_number
+                            : Icons.point_of_sale,
+                        color: order.hasToken
+                            ? Colors.green.shade800
+                            : Colors.amber.shade900,
+                        size: 26,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        order.hasToken
+                            ? 'TOKEN: #${order.tokenNumber}'
+                            : 'TOKEN PENDING AT COUNTER',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: order.hasToken
+                              ? Colors.green.shade900
+                              : Colors.amber.shade900,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    order.hasToken
+                        ? 'Token generated automatically. Your order is now in the kitchen queue!'
+                        : 'Head to the counter, pay cash to the staff member, and collect your token to start cooking.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: order.hasToken
+                          ? Colors.green.shade900
+                          : Colors.amber.shade900,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
 
             // Order details card
             Card(
@@ -69,6 +136,20 @@ class OrderConfirmationScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _detailRow(
+                      context,
+                      'Order Token',
+                      order.tokenDisplay,
+                      valueColor: order.hasToken ? Colors.green.shade800 : Colors.amber.shade900,
+                    ),
+                    const Divider(height: 20),
+                    _detailRow(
+                      context,
+                      'Payment Method',
+                      order.isOnlinePayment ? 'Online (Paid)' : 'Cash at Counter (Unpaid)',
+                      valueColor: order.isOnlinePayment ? Colors.green.shade700 : Colors.orange.shade800,
+                    ),
+                    const Divider(height: 20),
                     _detailRow(
                       context,
                       'Order ID',
@@ -84,12 +165,14 @@ class OrderConfirmationScreen extends StatelessWidget {
                     _detailRow(
                       context,
                       'Kitchen Queue',
-                      'Queue #${order.queuePosition} (${order.ordersAhead} ahead)',
+                      order.hasToken && order.queuePosition != null
+                          ? 'Queue #${order.queuePosition} (${order.ordersAhead ?? 0} ahead)'
+                          : 'Awaiting Token at Counter',
                       valueColor: colorScheme.primary,
                     ),
                     const Divider(height: 20),
                     _detailRow(context, 'Status', order.statusLabel,
-                        valueColor: Colors.orange),
+                        valueColor: order.statusColor),
                     const Divider(height: 20),
                     _detailRow(context, 'Estimated Prep',
                         order.estimatedPrepTime.isNotEmpty ? order.estimatedPrepTime : '~15 min'),

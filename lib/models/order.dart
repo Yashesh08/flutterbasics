@@ -48,11 +48,14 @@ class Order {
     required this.status,
     this.userId,
     this.orderType = 'dine-in',
+    this.paymentMethod = 'online',
+    this.paymentStatus = 'paid',
+    this.tokenNumber,
     this.expectedReadyAt,
     this.specialInstructions = '',
     this.estimatedPrepTime = '',
-    this.queuePosition = 1,
-    this.ordersAhead = 0,
+    this.queuePosition,
+    this.ordersAhead,
     this.queueWaitTime = '0 min',
     this.createdAt,
     this.updatedAt,
@@ -66,11 +69,14 @@ class Order {
   final double totalAmount;
   final String orderType;
   final String status;
+  final String paymentMethod;
+  final String paymentStatus;
+  final String? tokenNumber;
   final DateTime? expectedReadyAt;
   final String specialInstructions;
   final String estimatedPrepTime;
-  final int queuePosition;
-  final int ordersAhead;
+  final int? queuePosition;
+  final int? ordersAhead;
   final String queueWaitTime;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -87,13 +93,16 @@ class Order {
         totalAmount: (json['totalAmount'] as num?)?.toDouble() ?? 0.0,
         orderType: json['orderType'] as String? ?? 'dine-in',
         status: json['status'] as String? ?? 'pending',
+        paymentMethod: json['paymentMethod'] as String? ?? 'online',
+        paymentStatus: json['paymentStatus'] as String? ?? 'paid',
+        tokenNumber: json['tokenNumber'] as String?,
         expectedReadyAt: json['expectedReadyAt'] != null
             ? DateTime.tryParse(json['expectedReadyAt'] as String)
             : null,
         specialInstructions: json['specialInstructions'] as String? ?? '',
         estimatedPrepTime: json['estimatedPrepTime'] as String? ?? '',
-        queuePosition: (json['queuePosition'] as num?)?.toInt() ?? 1,
-        ordersAhead: (json['ordersAhead'] as num?)?.toInt() ?? 0,
+        queuePosition: (json['queuePosition'] as num?)?.toInt(),
+        ordersAhead: (json['ordersAhead'] as num?)?.toInt(),
         queueWaitTime: json['queueWaitTime'] as String? ?? '0 min',
         createdAt: json['createdAt'] != null
             ? DateTime.tryParse(json['createdAt'] as String)
@@ -112,12 +121,15 @@ class Order {
         'totalAmount': totalAmount,
         'orderType': orderType,
         'status': status,
+        'paymentMethod': paymentMethod,
+        'paymentStatus': paymentStatus,
+        if (tokenNumber != null) 'tokenNumber': tokenNumber,
         if (expectedReadyAt != null)
           'expectedReadyAt': expectedReadyAt!.toIso8601String(),
         'specialInstructions': specialInstructions,
         'estimatedPrepTime': estimatedPrepTime,
-        'queuePosition': queuePosition,
-        'ordersAhead': ordersAhead,
+        if (queuePosition != null) 'queuePosition': queuePosition,
+        if (ordersAhead != null) 'ordersAhead': ordersAhead,
         'queueWaitTime': queueWaitTime,
         if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
         if (updatedAt != null) 'updatedAt': updatedAt!.toIso8601String(),
@@ -126,6 +138,9 @@ class Order {
   Order copyWith({
     String? status,
     String? orderType,
+    String? paymentMethod,
+    String? paymentStatus,
+    String? tokenNumber,
     DateTime? expectedReadyAt,
     String? estimatedPrepTime,
     int? queuePosition,
@@ -141,6 +156,9 @@ class Order {
         totalAmount: totalAmount,
         orderType: orderType ?? this.orderType,
         status: status ?? this.status,
+        paymentMethod: paymentMethod ?? this.paymentMethod,
+        paymentStatus: paymentStatus ?? this.paymentStatus,
+        tokenNumber: tokenNumber ?? this.tokenNumber,
         expectedReadyAt: expectedReadyAt ?? this.expectedReadyAt,
         specialInstructions: specialInstructions,
         estimatedPrepTime: estimatedPrepTime ?? this.estimatedPrepTime,
@@ -173,6 +191,8 @@ class Order {
   /// Human-friendly status label.
   String get statusLabel {
     switch (status) {
+      case 'awaiting_payment':
+        return 'Awaiting Cash Payment';
       case 'pending':
         return 'Pending';
       case 'preparing':
@@ -191,6 +211,8 @@ class Order {
   /// Color associated with order status.
   Color get statusColor {
     switch (status) {
+      case 'awaiting_payment':
+        return Colors.deepOrange;
       case 'pending':
         return Colors.orange;
       case 'preparing':
@@ -208,17 +230,35 @@ class Order {
 
   /// Whether the order is still active (not completed or cancelled).
   bool get isActive =>
-      status == 'pending' || status == 'preparing' || status == 'ready';
+      status == 'awaiting_payment' ||
+      status == 'pending' ||
+      status == 'preparing' ||
+      status == 'ready';
 
-  /// Queue position display string (e.g. 'Queue #3').
-  String get queuePositionBadge => 'Queue #$queuePosition';
+  /// Payment & Token helpers
+  bool get isOnlinePayment => paymentMethod.toLowerCase() == 'online';
+  bool get isOfflinePayment => paymentMethod.toLowerCase() == 'offline';
+  bool get isPaid => paymentStatus.toLowerCase() == 'paid';
+  bool get isAwaitingPayment =>
+      status == 'awaiting_payment' ||
+      paymentStatus.toLowerCase() == 'pending_payment';
+
+  bool get hasToken => tokenNumber != null && tokenNumber!.isNotEmpty;
+  String get tokenDisplay => hasToken ? '#$tokenNumber' : 'Pay at Counter';
+
+  /// Queue position display string (e.g. 'Queue #3' or 'Awaiting Token').
+  String get queuePositionBadge =>
+      queuePosition != null ? 'Queue #$queuePosition' : 'Awaiting Token';
 
   /// Human-friendly queue status explanation.
   String get queueSummary {
-    if (ordersAhead == 0) {
+    if (isAwaitingPayment) {
+      return 'Pay cash at counter to receive token & enter kitchen queue';
+    }
+    if (ordersAhead == null || ordersAhead == 0) {
       return 'First in kitchen queue (Immediate prep)';
     }
-    return '$ordersAhead order${ordersAhead > 1 ? 's' : ''} ahead in kitchen queue';
+    return '$ordersAhead order${ordersAhead! > 1 ? 's' : ''} ahead in kitchen queue';
   }
 
   /// Full queue wait breakdown for user display.

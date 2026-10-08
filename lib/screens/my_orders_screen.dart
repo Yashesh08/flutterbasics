@@ -257,6 +257,66 @@ class _OrderCard extends StatelessWidget {
               ),
               const Divider(height: 24),
 
+              // Token & Payment Badge Card
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: order.hasToken
+                      ? Colors.green.shade50
+                      : Colors.amber.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: order.hasToken
+                        ? Colors.green.shade300
+                        : Colors.amber.shade400,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      order.hasToken
+                          ? Icons.confirmation_number
+                          : Icons.point_of_sale,
+                      color: order.hasToken
+                          ? Colors.green.shade800
+                          : Colors.amber.shade900,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            order.hasToken
+                                ? 'Order Token: #${order.tokenNumber}'
+                                : 'Token: Pending Cash Payment',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: order.hasToken
+                                  ? Colors.green.shade900
+                                  : Colors.amber.shade900,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            order.hasToken
+                                ? 'Payment: ${order.isOnlinePayment ? 'Online (Paid)' : 'Cash at Counter (Paid)'}'
+                                : 'Pay \$${order.totalAmount.toStringAsFixed(2)} cash at counter to collect token.',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: order.hasToken
+                                  ? Colors.green.shade900
+                                  : Colors.amber.shade900,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+
               // Dining & ETA Section
               Container(
                 padding: const EdgeInsets.all(12),
@@ -440,7 +500,42 @@ class _OrderCard extends StatelessWidget {
                           style: TextStyle(fontSize: 10, color: colorScheme.primary, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      if (order.isActive) ...[
+                      if (order.hasToken) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Token #${order.tokenNumber}',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.green.shade900,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ] else if (order.isAwaitingPayment) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.amber.shade100,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            'Pay at Counter',
+                            style: TextStyle(
+                              fontSize: 10,
+                              color: Colors.amber.shade900,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                      if (order.isActive && order.queuePosition != null) ...[
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -487,8 +582,34 @@ class _OrderCard extends StatelessWidget {
               ),
               const SizedBox(height: 10),
 
-              // ETA Ready Time Banner for active orders
-              if (order.isActive) ...[
+              // Banner for active orders: Awaiting payment vs In Kitchen Prep
+              if (order.isAwaitingPayment) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.amber.shade300),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.point_of_sale, size: 16, color: Colors.amber.shade900),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          'Pay \$${order.totalAmount.toStringAsFixed(2)} at counter to receive token & send to kitchen.',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.amber.shade900,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else if (order.isActive) ...[
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   margin: const EdgeInsets.only(bottom: 10),

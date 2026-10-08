@@ -24,6 +24,7 @@ class CheckoutScreen extends StatefulWidget {
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final _instructionsController = TextEditingController();
   String _orderType = 'dine-in';
+  String _paymentMethod = 'online';
   bool _placingOrder = false;
 
   @override
@@ -76,6 +77,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         items: items,
         totalAmount: cart.totalAmount,
         orderType: _orderType,
+        paymentMethod: _paymentMethod,
         specialInstructions: _instructionsController.text.trim(),
       );
 
@@ -203,6 +205,96 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           selected: {_orderType},
                           onSelectionChanged: (set) =>
                               setState(() => _orderType = set.first),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Payment Method Selection (Online / Offline Cash)
+                        Text(
+                          'Payment Option',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        SegmentedButton<String>(
+                          segments: const [
+                            ButtonSegment(
+                              value: 'online',
+                              label: Text('Online'),
+                              icon: Icon(Icons.payment),
+                            ),
+                            ButtonSegment(
+                              value: 'offline',
+                              label: Text('Cash at Counter'),
+                              icon: Icon(Icons.point_of_sale),
+                            ),
+                          ],
+                          selected: {_paymentMethod},
+                          onSelectionChanged: (set) =>
+                              setState(() => _paymentMethod = set.first),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Payment & Token Workflow Guidance Card
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: _paymentMethod == 'online'
+                                ? Colors.green.shade50
+                                : Colors.amber.shade50,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: _paymentMethod == 'online'
+                                  ? Colors.green.shade200
+                                  : Colors.amber.shade300,
+                            ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                _paymentMethod == 'online'
+                                    ? Icons.bolt
+                                    : Icons.storefront,
+                                color: _paymentMethod == 'online'
+                                    ? Colors.green.shade800
+                                    : Colors.amber.shade900,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _paymentMethod == 'online'
+                                          ? 'Instant Token & Direct to Kitchen'
+                                          : 'Token Issued by Staff Upon Cash Payment',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                        color: _paymentMethod == 'online'
+                                            ? Colors.green.shade900
+                                            : Colors.amber.shade900,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      _paymentMethod == 'online'
+                                          ? 'Your token is generated automatically. Order is sent immediately to the kitchen.'
+                                          : 'Pay cash to staff at the counter to collect your token. Order goes to the kitchen once token is issued.',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: _paymentMethod == 'online'
+                                            ? Colors.green.shade900
+                                            : Colors.amber.shade900,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 16),
 

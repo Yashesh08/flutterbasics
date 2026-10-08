@@ -5,7 +5,13 @@ const Order = require('../models/Order');
 
 const router = express.Router();
 
-// POST /api/orders - place a new order with calculated expected ready time (ETA)
+// Helper to generate sequential order token (e.g. T-101, T-102...)
+async function generateOrderToken() {
+  const count = await Order.countDocuments({ tokenNumber: { $ne: null } });
+  return `T-${101 + count}`;
+}
+
+// POST /api/orders - place a new order (online or offline cash payment)
 router.post('/', async (req, res, next) => {
   try {
     const {
@@ -15,6 +21,7 @@ router.post('/', async (req, res, next) => {
       items,
       totalAmount,
       orderType = 'dine-in',
+      paymentMethod = 'online',
       specialInstructions = '',
     } = req.body;
 
@@ -29,31 +36,55 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({ message: 'Valid total amount is required.' });
     }
 
-    // ── Kitchen Queue Calculation (predict time using kitchen queue) ───────
-    // Query currently active orders waiting or being prepared in kitchen
-    const activeKitchenOrders = await Order.find({
-      status: { $in: ['pending', 'preparing'] },
-    }).select('status items');
-
-    const ordersAhead = activeKitchenOrders.length;
-    const queuePosition = ordersAhead + 1;
-
-    // Kitchen throughput: canteen kitchen operates with 2 concurrent cooking stations
-    // Each pair of orders ahead in the queue adds ~3 minutes of queue waiting time
-    const queueWaitMinutes = ordersAhead === 0 ? 0 : Math.ceil(ordersAhead / 2) * 3;
-    const queueWaitTime = `${queueWaitMinutes} min`;
-
     const bufferMinutes = 3;
     const prepTimes = items.map((i) => {
       const match = String(i.prepTime || '').match(/\d+/);
       return match ? parseInt(match[0], 10) : 8;
     });
-
     const maxPrepTime = prepTimes.length > 0 ? Math.max(...prepTimes) : 8;
-    // Total ETA = Max item cooking time + Kitchen queue wait time + Buffer
-    const totalEtaMinutes = maxPrepTime + queueWaitMinutes + bufferMinutes;
-    const estimatedPrepTime = `${totalEtaMinutes} min`;
-    const expectedReadyAt = new Date(Date.now() + totalEtaMinutes * 60 * 1000);
+
+    const isOnline = paymentMethod !== 'offline';
+    let tokenNumber = null;
+    let status = 'awaiting_payment';
+    let paymentStatus = 'pending_payment';
+    let ordersAhead = null;
+    let queuePosition = null;
+    let queueWaitTime = 'Pay cash at counter';
+    let estimatedPrepTime = 'Pending token at counter';
+    let expectedReadyAt = null;
+
+    if (isOnline) {
+      // ── ONLINE PAYMENT ──────────────────────────────────────────────────
+      // Token generated automatically and order goes immediately to kitchen
+      tokenNumber = await generateOrderToken();
+      paymentStatus = 'paid';
+      status = 'pending';
+
+      const activeKitchenOrders = await Order.find({
+        status: { $in: ['pending', 'preparing'] },
+      }).select('status items');
+
+      ordersAhead = activeKitchenOrders.length;
+      queuePosition = ordersAhead + 1;
+      const queueWaitMinutes = ordersAhead === 0 ? 0 : Math.ceil(ordersAhead / 2) * 3;
+      queueWaitTime = `${queueWaitMinutes} min`;
+
+      const totalEtaMinutes = maxPrepTime + queueWaitMinutes + bufferMinutes;
+      estimatedPrepTime = `${totalEtaMinutes} min`;
+      expectedReadyAt = new Date(Date.now() + totalEtaMinutes * 60 * 1000);
+    } else {
+      // ── OFFLINE CASH PAYMENT ─────────────────────────────────────────────
+      // Student orders, but must collect token from staff at counter after paying cash.
+      // Order does NOT go to kitchen until token is issued!
+      tokenNumber = null;
+      paymentStatus = 'pending_payment';
+      status = 'awaiting_payment';
+      ordersAhead = null;
+      queuePosition = null;
+      queueWaitTime = 'Pay cash at counter';
+      estimatedPrepTime = 'Pending token at counter';
+      expectedReadyAt = null;
+    }
 
     const validOrderType = orderType === 'takeaway' ? 'takeaway' : 'dine-in';
 
@@ -81,7 +112,10 @@ router.post('/', async (req, res, next) => {
       items: formattedItems,
       totalAmount: parsedTotal,
       orderType: validOrderType,
-      status: 'pending',
+      status,
+      paymentMethod: isOnline ? 'online' : 'offline',
+      paymentStatus,
+      tokenNumber,
       expectedReadyAt,
       estimatedPrepTime,
       queuePosition,
@@ -247,6 +281,63 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+// PATCH /api/orders/:id/issue-token - staff confirms cash payment at counter, issues token, sends order to kitchen
+router.patch('/:id/issue-token', async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: 'Invalid order ID format.' });
+    }
+
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found.' });
+    }
+
+    if (order.tokenNumber) {
+      return res.status(400).json({
+        message: `Token ${order.tokenNumber} has already been issued for this order.`,
+        order: formatOrder(order),
+      });
+    }
+
+    // 1. Generate token
+    const tokenNumber = await generateOrderToken();
+
+    // 2. Order enters kitchen queue!
+    const activeKitchenOrders = await Order.find({
+      status: { $in: ['pending', 'preparing'] },
+    }).select('status items');
+
+    const ordersAhead = activeKitchenOrders.length;
+    const queuePosition = ordersAhead + 1;
+    const queueWaitMinutes = ordersAhead === 0 ? 0 : Math.ceil(ordersAhead / 2) * 3;
+    const bufferMinutes = 3;
+
+    const prepTimes = order.items.map((i) => {
+      const match = String(i.prepTime || '').match(/\d+/);
+      return match ? parseInt(match[0], 10) : 8;
+    });
+    const maxPrepTime = prepTimes.length > 0 ? Math.max(...prepTimes) : 8;
+    const totalEtaMinutes = maxPrepTime + queueWaitMinutes + bufferMinutes;
+    const estimatedPrepTime = `${totalEtaMinutes} min`;
+    const expectedReadyAt = new Date(Date.now() + totalEtaMinutes * 60 * 1000);
+
+    order.paymentStatus = 'paid';
+    order.tokenNumber = tokenNumber;
+    order.status = 'pending'; // Now goes to kitchen!
+    order.ordersAhead = ordersAhead;
+    order.queuePosition = queuePosition;
+    order.queueWaitTime = `${queueWaitMinutes} min`;
+    order.estimatedPrepTime = estimatedPrepTime;
+    order.expectedReadyAt = expectedReadyAt;
+
+    await order.save();
+    return res.json(formatOrder(order));
+  } catch (error) {
+    return next(error);
+  }
+});
+
 // PATCH /api/orders/:id/status - update order status (admin)
 router.patch('/:id/status', async (req, res, next) => {
   try {
@@ -255,7 +346,14 @@ router.patch('/:id/status', async (req, res, next) => {
     }
 
     const { status } = req.body;
-    const validStatuses = ['pending', 'preparing', 'ready', 'collected', 'cancelled'];
+    const validStatuses = [
+      'awaiting_payment',
+      'pending',
+      'preparing',
+      'ready',
+      'collected',
+      'cancelled',
+    ];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
@@ -287,6 +385,9 @@ router.get('/stats/summary', async (req, res, next) => {
           _id: null,
           totalOrders: { $sum: 1 },
           totalRevenue: { $sum: '$totalAmount' },
+          awaitingPaymentCount: {
+            $sum: { $cond: [{ $eq: ['$status', 'awaiting_payment'] }, 1, 0] },
+          },
           pendingCount: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
           preparingCount: { $sum: { $cond: [{ $eq: ['$status', 'preparing'] }, 1, 0] } },
           readyCount: { $sum: { $cond: [{ $eq: ['$status', 'ready'] }, 1, 0] } },
@@ -300,6 +401,7 @@ router.get('/stats/summary', async (req, res, next) => {
       stats || {
         totalOrders: 0,
         totalRevenue: 0,
+        awaitingPaymentCount: 0,
         pendingCount: 0,
         preparingCount: 0,
         readyCount: 0,
@@ -329,10 +431,13 @@ function formatOrder(order) {
     totalAmount: order.totalAmount,
     orderType: order.orderType || 'dine-in',
     status: order.status,
+    paymentMethod: order.paymentMethod || 'online',
+    paymentStatus: order.paymentStatus || 'paid',
+    tokenNumber: order.tokenNumber || null,
     specialInstructions: order.specialInstructions,
     estimatedPrepTime: order.estimatedPrepTime,
-    queuePosition: order.queuePosition !== undefined ? order.queuePosition : 1,
-    ordersAhead: order.ordersAhead !== undefined ? order.ordersAhead : 0,
+    queuePosition: order.queuePosition != null ? order.queuePosition : null,
+    ordersAhead: order.ordersAhead != null ? order.ordersAhead : null,
     queueWaitTime: order.queueWaitTime || '0 min',
     expectedReadyAt: order.expectedReadyAt ? order.expectedReadyAt.toISOString() : undefined,
     createdAt: order.createdAt ? order.createdAt.toISOString() : undefined,

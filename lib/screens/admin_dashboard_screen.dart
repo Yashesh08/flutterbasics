@@ -166,6 +166,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 child: Row(
                   children: [
                     _filterChip('All', 'all', null, colorScheme),
+                    _filterChip('Cash Counter', 'awaiting_payment', Colors.amber.shade900, colorScheme),
                     _filterChip('Pending', 'pending', Colors.orange, colorScheme),
                     _filterChip('Preparing', 'preparing', Colors.blue, colorScheme),
                     _filterChip('Ready', 'ready', Colors.green, colorScheme),
@@ -233,6 +234,29 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               order.id,
                               newStatus,
                             ),
+                    onIssueToken: () async {
+                      final messenger = ScaffoldMessenger.of(context);
+                      try {
+                        final updated = await context
+                            .read<OrderProvider>()
+                            .issueOrderToken(order.id);
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Token ${updated.tokenDisplay} issued! Order sent to kitchen.',
+                            ),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      } catch (e) {
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to issue token: $e'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    },
                     onTap: () => _showOrderDetail(context, order),
                   ),
                 ),
@@ -336,7 +360,13 @@ class _StatsGrid extends StatelessWidget {
           color: Colors.green,
         ),
         _StatCard(
-          title: 'Pending',
+          title: 'Cash Counter',
+          value: '${stats['awaitingPaymentCount'] ?? 0}',
+          icon: Icons.point_of_sale,
+          color: Colors.amber.shade900,
+        ),
+        _StatCard(
+          title: 'Pending (Kitchen)',
           value: '${stats['pendingCount'] ?? 0}',
           icon: Icons.schedule,
           color: Colors.orange,
@@ -352,12 +382,6 @@ class _StatsGrid extends StatelessWidget {
           value: '${stats['readyCount'] ?? 0}',
           icon: Icons.check_circle,
           color: Colors.teal,
-        ),
-        _StatCard(
-          title: 'Collected',
-          value: '${stats['collectedCount'] ?? 0}',
-          icon: Icons.done_all,
-          color: Colors.grey,
         ),
       ],
     );
@@ -433,15 +457,19 @@ class _AdminOrderCard extends StatelessWidget {
   const _AdminOrderCard({
     required this.order,
     required this.onStatusUpdate,
+    this.onIssueToken,
     required this.onTap,
   });
 
   final Order order;
   final ValueChanged<String> onStatusUpdate;
+  final Future<void> Function()? onIssueToken;
   final VoidCallback onTap;
 
   Color _statusColor() {
     switch (order.status) {
+      case 'awaiting_payment':
+        return Colors.amber.shade900;
       case 'pending':
         return Colors.orange;
       case 'preparing':
@@ -459,6 +487,16 @@ class _AdminOrderCard extends StatelessWidget {
 
   List<_StatusAction> _getActions() {
     switch (order.status) {
+      case 'awaiting_payment':
+        return [
+          _StatusAction(
+            'Collect Cash & Issue Token',
+            'issue_token',
+            Colors.amber.shade900,
+            Icons.point_of_sale,
+          ),
+          const _StatusAction('Cancel', 'cancelled', Colors.red, Icons.cancel),
+        ];
       case 'pending':
         return const [
           _StatusAction(
@@ -559,7 +597,88 @@ class _AdminOrderCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
+
+              // ── Payment & Token Badge Row ────────────────────
+              Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  if (order.hasToken)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.green.shade400),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.confirmation_number_outlined,
+                              size: 13, color: Colors.green.shade800),
+                          const SizedBox(width: 4),
+                          Text(
+                            order.tokenDisplay,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green.shade800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  else if (order.isAwaitingPayment)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.amber.shade600),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.point_of_sale,
+                              size: 13, color: Colors.amber.shade900),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Cash at Counter · No Token',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.amber.shade900,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: order.isOnlinePayment
+                          ? Colors.blue.shade50
+                          : Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      order.isOnlinePayment ? 'Online (Paid)' : 'Offline (Cash)',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: order.isOnlinePayment
+                            ? Colors.blue.shade800
+                            : Colors.deepOrange.shade800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
 
               // ── Items ─────────────────────────────────────────
               ...order.items.take(3).map((item) => Padding(
@@ -653,17 +772,32 @@ class _AdminOrderCard extends StatelessWidget {
                                         side: BorderSide(color: action.color),
                                       ),
                                     )
-                                  : FilledButton.icon(
-                                      onPressed: () =>
-                                          onStatusUpdate(action.status),
-                                      icon: Icon(action.icon, size: 16),
-                                      label: Text(action.label,
-                                          style:
-                                              const TextStyle(fontSize: 12)),
-                                      style: FilledButton.styleFrom(
-                                        backgroundColor: action.color,
-                                      ),
-                                    ),
+                                  : action.status == 'issue_token'
+                                      ? FilledButton.icon(
+                                          onPressed: onIssueToken != null
+                                              ? () => onIssueToken!()
+                                              : () => onStatusUpdate(action.status),
+                                          icon: Icon(action.icon, size: 16),
+                                          label: Text(action.label,
+                                              style: const TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold)),
+                                          style: FilledButton.styleFrom(
+                                            backgroundColor: action.color,
+                                            foregroundColor: Colors.white,
+                                          ),
+                                        )
+                                      : FilledButton.icon(
+                                          onPressed: () =>
+                                              onStatusUpdate(action.status),
+                                          icon: Icon(action.icon, size: 16),
+                                          label: Text(action.label,
+                                              style:
+                                                  const TextStyle(fontSize: 12)),
+                                          style: FilledButton.styleFrom(
+                                            backgroundColor: action.color,
+                                          ),
+                                        ),
                             ),
                           ))
                       .toList(),
@@ -805,6 +939,42 @@ class _OrderDetailSheet extends StatelessWidget {
                     const SizedBox(height: 4),
                     _Row('Placed at',
                         '${order.createdAt!.hour.toString().padLeft(2, '0')}:${order.createdAt!.minute.toString().padLeft(2, '0')} · ${order.createdAt!.day}/${order.createdAt!.month}/${order.createdAt!.year}'),
+                  ],
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Payment & Token info
+            _Section(
+              title: 'Payment & Token',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _Row(
+                    'Payment Method',
+                    order.isOnlinePayment
+                        ? 'Online (Instant Token)'
+                        : 'Offline (Cash at Counter)',
+                  ),
+                  const SizedBox(height: 4),
+                  _Row(
+                    'Payment Status',
+                    order.isPaid ? 'Paid' : 'Awaiting Cash at Counter',
+                  ),
+                  const SizedBox(height: 4),
+                  _Row('Token', order.tokenDisplay),
+                  if (order.queuePosition != null) ...[
+                    const SizedBox(height: 4),
+                    _Row(
+                      'Kitchen Queue',
+                      'Position #${order.queuePosition} (${order.ordersAhead} ahead)',
+                    ),
+                  ],
+                  if (order.queueWaitTime.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    _Row('Wait Time', order.queueWaitTime),
                   ],
                 ],
               ),

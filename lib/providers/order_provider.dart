@@ -27,6 +27,9 @@ class OrderProvider extends ChangeNotifier {
   List<Order> get completedOrders =>
       _orders.where((o) => !o.isActive).toList();
 
+  List<Order> get awaitingPaymentOrders =>
+      _orders.where((o) => o.isAwaitingPayment).toList();
+
   // ── Kitchen Queue & ETA Estimation ───────────────────────────────────
   Future<Map<String, dynamic>> fetchQueueEstimate({int? itemPrepMinutes}) async {
     try {
@@ -49,6 +52,7 @@ class OrderProvider extends ChangeNotifier {
     required double totalAmount,
     String? userId,
     String orderType = 'dine-in',
+    String paymentMethod = 'online',
     String specialInstructions = '',
   }) async {
     _setLoading(true);
@@ -60,6 +64,7 @@ class OrderProvider extends ChangeNotifier {
         items: items,
         totalAmount: totalAmount,
         orderType: orderType,
+        paymentMethod: paymentMethod,
         specialInstructions: specialInstructions,
       );
       _orders.insert(0, order);
@@ -72,6 +77,24 @@ class OrderProvider extends ChangeNotifier {
       rethrow;
     } finally {
       _setLoading(false);
+    }
+  }
+
+  // ── Issue Token at Counter (Staff Action) ───────────────────────────
+  Future<Order> issueOrderToken(String orderId) async {
+    try {
+      final updated = await _orderService.issueOrderToken(orderId);
+      final index = _orders.indexWhere((o) => o.id == orderId);
+      if (index != -1) {
+        _orders[index] = updated;
+      }
+      _error = null;
+      notifyListeners();
+      return updated;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
     }
   }
 

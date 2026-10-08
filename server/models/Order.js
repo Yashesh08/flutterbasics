@@ -38,12 +38,27 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'preparing', 'ready', 'collected', 'cancelled'],
+      enum: ['awaiting_payment', 'pending', 'preparing', 'ready', 'collected', 'cancelled'],
       default: 'pending',
+    },
+    paymentMethod: {
+      type: String,
+      enum: ['online', 'offline'],
+      default: 'online',
+    },
+    paymentStatus: {
+      type: String,
+      enum: ['paid', 'pending_payment', 'failed'],
+      default: 'paid',
+    },
+    tokenNumber: {
+      type: String,
+      default: null,
+      trim: true,
     },
     expectedReadyAt: {
       type: Date,
-      required: true,
+      required: false,
     },
     estimatedPrepTime: {
       type: String,
@@ -51,11 +66,11 @@ const orderSchema = new mongoose.Schema(
     },
     queuePosition: {
       type: Number,
-      default: 1,
+      default: null,
     },
     ordersAhead: {
       type: Number,
-      default: 0,
+      default: null,
     },
     queueWaitTime: {
       type: String,

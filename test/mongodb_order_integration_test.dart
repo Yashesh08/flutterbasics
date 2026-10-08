@@ -45,11 +45,11 @@ void main() {
       // 3. Verify ETA calculation: MAX(6, 12) + queue wait + 3 buffer
       final expectedQueueWait = order.ordersAhead == 0
           ? 0
-          : ((order.ordersAhead + 1) ~/ 2) * 3;
+          : (((order.ordersAhead ?? 0) + 1) ~/ 2) * 3;
       final expectedTotalEta = 12 + expectedQueueWait + 3;
 
       expect(order.ordersAhead, isNonNegative);
-      expect(order.queuePosition, equals(order.ordersAhead + 1));
+      expect(order.queuePosition, equals((order.ordersAhead ?? 0) + 1));
       expect(order.estimatedPrepTime, equals('$expectedTotalEta min'));
       expect(order.expectedReadyAt, isNotNull);
 
@@ -96,7 +96,7 @@ void main() {
       // ETA: 4 min + queue wait + 3 buffer
       final expectedQueueWait = order.ordersAhead == 0
           ? 0
-          : ((order.ordersAhead + 1) ~/ 2) * 3;
+          : (((order.ordersAhead ?? 0) + 1) ~/ 2) * 3;
       final expectedTotal = 4 + expectedQueueWait + 3;
       expect(order.estimatedPrepTime, equals('$expectedTotal min'));
     });

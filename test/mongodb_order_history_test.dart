@@ -42,7 +42,7 @@ void main() {
       expect(createdOrder.status, equals('pending'));
       final expectedQueueWait = createdOrder.ordersAhead == 0
           ? 0
-          : ((createdOrder.ordersAhead + 1) ~/ 2) * 3;
+          : (((createdOrder.ordersAhead ?? 0) + 1) ~/ 2) * 3;
       final expectedEta = 6 + expectedQueueWait + 3;
       expect(createdOrder.estimatedPrepTime, equals('$expectedEta min'));
 

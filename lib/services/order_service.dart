@@ -25,6 +25,7 @@ class OrderService {
     required double totalAmount,
     String? userId,
     String orderType = 'dine-in',
+    String paymentMethod = 'online',
     String specialInstructions = '',
   }) async {
     try {
@@ -38,6 +39,7 @@ class OrderService {
           'items': items,
           'totalAmount': totalAmount,
           'orderType': orderType,
+          'paymentMethod': paymentMethod,
           'specialInstructions': specialInstructions,
         }),
       );
@@ -56,8 +58,32 @@ class OrderService {
         items: items,
         totalAmount: totalAmount,
         orderType: orderType,
+        paymentMethod: paymentMethod,
         specialInstructions: specialInstructions,
       );
+    }
+  }
+
+  // ── Issue Order Token at Counter (Staff confirms cash payment) ────────
+  Future<Order> issueOrderToken(String orderId) async {
+    try {
+      final response = await _client.patch(
+        Uri.parse('$_baseUrl/api/orders/$orderId/issue-token'),
+        headers: const {'Content-Type': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final order = Order.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+        final idx = _localOrders.indexWhere((o) => o.id == orderId);
+        if (idx != -1) {
+          _localOrders[idx] = order;
+        } else {
+          _localOrders.insert(0, order);
+        }
+        return order;
+      }
+      throw Exception('Failed to issue token: ${response.statusCode}');
+    } catch (_) {
+      return _issueTokenLocally(orderId);
     }
   }
 
@@ -208,13 +234,11 @@ class OrderService {
     required double totalAmount,
     String? userId,
     String orderType = 'dine-in',
+    String paymentMethod = 'online',
     String specialInstructions = '',
   }) {
     final now = DateTime.now();
-    final activeCount = _localOrders.where((o) => o.isActive).length;
-    final queueWaitMinutes = activeCount == 0 ? 0 : ((activeCount + 1) ~/ 2) * 3;
-    final queuePosition = activeCount + 1;
-    final queueWaitTime = '$queueWaitMinutes min';
+    final isOnline = paymentMethod != 'offline';
 
     final prepTimes = items.map((i) {
       final match = RegExp(r'\d+').firstMatch(i['prepTime']?.toString() ?? '');
@@ -223,9 +247,41 @@ class OrderService {
     final maxPrepTime = prepTimes.isNotEmpty
         ? prepTimes.reduce((a, b) => a > b ? a : b)
         : 8;
-    final totalEtaMinutes = maxPrepTime + queueWaitMinutes + 3;
-    final estimatedPrepTime = '$totalEtaMinutes min';
-    final expectedReadyAt = now.add(Duration(minutes: totalEtaMinutes));
+
+    final String? tokenNumber;
+    final String status;
+    final String paymentStatus;
+    final int? queuePosition;
+    final int? ordersAhead;
+    final String queueWaitTime;
+    final String estimatedPrepTime;
+    final DateTime? expectedReadyAt;
+
+    if (isOnline) {
+      final activeCount = _localOrders
+          .where((o) => o.status == 'pending' || o.status == 'preparing')
+          .length;
+      final queueWaitMinutes = activeCount == 0 ? 0 : ((activeCount + 1) ~/ 2) * 3;
+      final totalEtaMinutes = maxPrepTime + queueWaitMinutes + 3;
+
+      tokenNumber = 'T-${101 + _localOrders.where((o) => o.hasToken).length}';
+      status = 'pending';
+      paymentStatus = 'paid';
+      queuePosition = activeCount + 1;
+      ordersAhead = activeCount;
+      queueWaitTime = '$queueWaitMinutes min';
+      estimatedPrepTime = '$totalEtaMinutes min';
+      expectedReadyAt = now.add(Duration(minutes: totalEtaMinutes));
+    } else {
+      tokenNumber = null;
+      status = 'awaiting_payment';
+      paymentStatus = 'pending_payment';
+      queuePosition = null;
+      ordersAhead = null;
+      queueWaitTime = 'Pay cash at counter';
+      estimatedPrepTime = 'Pending token at counter';
+      expectedReadyAt = null;
+    }
 
     final order = Order(
       id: 'local-${_localIdCounter++}',
@@ -245,18 +301,58 @@ class OrderService {
           .toList(),
       totalAmount: totalAmount,
       orderType: orderType,
-      status: 'pending',
+      status: status,
+      paymentMethod: isOnline ? 'online' : 'offline',
+      paymentStatus: paymentStatus,
+      tokenNumber: tokenNumber,
       expectedReadyAt: expectedReadyAt,
       specialInstructions: specialInstructions,
       estimatedPrepTime: estimatedPrepTime,
       queuePosition: queuePosition,
-      ordersAhead: activeCount,
+      ordersAhead: ordersAhead,
       queueWaitTime: queueWaitTime,
       createdAt: now,
       updatedAt: now,
     );
     _localOrders.insert(0, order);
     return order;
+  }
+
+  Order _issueTokenLocally(String orderId) {
+    final index = _localOrders.indexWhere((o) => o.id == orderId);
+    if (index == -1) throw Exception('Order not found');
+
+    final existing = _localOrders[index];
+    if (existing.hasToken) return existing;
+
+    final now = DateTime.now();
+    final activeCount = _localOrders
+        .where((o) => o.status == 'pending' || o.status == 'preparing')
+        .length;
+    final queueWaitMinutes = activeCount == 0 ? 0 : ((activeCount + 1) ~/ 2) * 3;
+
+    final prepTimes = existing.items.map((i) {
+      final match = RegExp(r'\d+').firstMatch(i.prepTime);
+      return match != null ? int.parse(match.group(0)!) : 8;
+    }).toList();
+    final maxPrepTime = prepTimes.isNotEmpty
+        ? prepTimes.reduce((a, b) => a > b ? a : b)
+        : 8;
+    final totalEtaMinutes = maxPrepTime + queueWaitMinutes + 3;
+
+    final tokenNumber = 'T-${101 + _localOrders.where((o) => o.hasToken).length}';
+    final updated = existing.copyWith(
+      paymentStatus: 'paid',
+      tokenNumber: tokenNumber,
+      status: 'pending',
+      queuePosition: activeCount + 1,
+      ordersAhead: activeCount,
+      queueWaitTime: '$queueWaitMinutes min',
+      estimatedPrepTime: '$totalEtaMinutes min',
+      expectedReadyAt: now.add(Duration(minutes: totalEtaMinutes)),
+    );
+    _localOrders[index] = updated;
+    return updated;
   }
 
   List<Order> _fetchOrdersLocally({String? email, String? status}) {
