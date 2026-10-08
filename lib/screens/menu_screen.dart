@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth_service.dart';
+import '../main.dart';
 import '../models/menu_item.dart';
 import '../providers/cart_provider.dart';
 import '../providers/menu_provider.dart';
@@ -288,6 +289,16 @@ class _MenuScreenState extends State<MenuScreen> {
               label: Text('${cart.itemCount}'),
               isLabelVisible: cart.itemCount > 0,
               child: const Icon(Icons.shopping_bag_outlined),
+            ),
+          ),
+          IconButton(
+            tooltip: 'Log out',
+            icon: const Icon(Icons.logout),
+            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => LoginScreen(authService: AuthService()),
+              ),
+              (_) => false,
             ),
           ),
           const SizedBox(width: 8),

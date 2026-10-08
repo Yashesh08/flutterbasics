@@ -89,13 +89,36 @@ class AuthService {
     required String email,
     required String password,
     required String role,
-  }) =>
-      _send('/api/auth/register', {
+  }) async {
+    try {
+      return await _send('/api/auth/register', {
         'name': name,
         'email': email,
         'password': password,
         'role': role,
       });
+    } on AuthException catch (e) {
+      if (_useSeedData && e.message.contains('Could not reach')) {
+        return _registerWithSeedData(
+          name: name,
+          email: email,
+          password: password,
+          role: role,
+        );
+      }
+      rethrow;
+    } catch (_) {
+      if (_useSeedData) {
+        return _registerWithSeedData(
+          name: name,
+          email: email,
+          password: password,
+          role: role,
+        );
+      }
+      rethrow;
+    }
+  }
 
   Future<AuthResult> login({required String email, required String password}) async {
     try {
@@ -126,6 +149,22 @@ class AuthService {
     throw const AuthException(
       'Use one of the seeded demo account email and password combinations shown below.',
     );
+  }
+
+  Future<AuthResult> _registerWithSeedData({
+    required String name,
+    required String email,
+    required String password,
+    required String role,
+  }) async {
+    // In seed/offline mode, create a local user from the registration details.
+    final user = AuthUser(
+      id: 'seed-${DateTime.now().millisecondsSinceEpoch}',
+      name: name,
+      email: email.trim().toLowerCase(),
+      role: role,
+    );
+    return AuthResult(token: 'seed-session-${user.id}', user: user);
   }
 
   Future<AuthResult> _send(String path, Map<String, String> body) async {

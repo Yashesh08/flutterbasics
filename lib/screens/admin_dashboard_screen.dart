@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../auth_service.dart';
+import '../main.dart';
 import '../models/order.dart';
 import '../providers/order_provider.dart';
 import 'admin_menu_management_screen.dart';
@@ -105,8 +106,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Log out',
-            onPressed: () => Navigator.of(context)
-                .popUntil((route) => route.isFirst),
+            onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => LoginScreen(authService: AuthService()),
+              ),
+              (_) => false,
+            ),
           ),
           const SizedBox(width: 4),
         ],
